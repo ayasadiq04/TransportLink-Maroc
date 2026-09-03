@@ -1,0 +1,43 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transportlink-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: transportlink
+      DB_USERNAME: transportlink
+      DB_PASSWORD: transportlink_password
+
+  db:
+    image: mysql:8.0
+    container_name: transportlink-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: transportlink
+      MYSQL_USER: transportlink
+      MYSQL_PASSWORD: transportlink_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - transportlink_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-utransportlink", "-ptransportlink_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  transportlink_mysql_data:
