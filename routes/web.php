@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\TransportRequestController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -40,9 +41,20 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 
 });
 Route::middleware(['auth', 'role:transporteur'])->group(function () {
-
+    Route::get(
+    '/available-transport-requests',
+    [TransportRequestController::class, 'available']
+    )->name('transport-requests.available');
     Route::resource('vehicles', VehicleController::class)
         ->except(['show']);
+    Route::get(
+        '/transport-requests/{transportRequest}/offer',
+        [OfferController::class, 'create']
+    )->name('offers.create');
 
+    Route::post(
+        '/transport-requests/{transportRequest}/offer',
+        [OfferController::class, 'store']
+    )->name('offers.store');
 });
 require __DIR__.'/auth.php';

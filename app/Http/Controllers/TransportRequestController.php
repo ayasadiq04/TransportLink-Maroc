@@ -15,6 +15,15 @@ class TransportRequestController extends Controller
 
     return view('transport-requests.index', compact('requests'));
     }
+
+    public function available()
+    {
+    $requests = TransportRequest::where('status', 'pending')
+        ->latest()
+        ->get();
+
+    return view('transport-requests.available', compact('requests'));
+    }
     public function create()
     {
         return view('transport-requests.create');
