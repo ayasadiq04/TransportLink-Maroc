@@ -23,6 +23,10 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    public function vehicles(): HasMany
+    {
+    return $this->hasMany(Vehicle::class, 'transporteur_id');
+    }
     public function transportRequests(): HasMany
     {
     return $this->hasMany(TransportRequest::class, 'client_id');
