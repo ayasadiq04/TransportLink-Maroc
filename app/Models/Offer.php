@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Offer extends Model
 {
@@ -11,13 +12,15 @@ class Offer extends Model
         'transport_request_id',
         'transporteur_id',
         'vehicle_id',
-        'price',
+        'amount',
         'message',
+        'conditions',
+        'estimated_delivery_time',
         'status',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'amount' => 'decimal:2',
     ];
 
     public function transportRequest(): BelongsTo
@@ -38,9 +41,11 @@ class Offer extends Model
 
     public function vehicle(): BelongsTo
     {
-        return $this->belongsTo(
-            Vehicle::class,
-            'vehicle_id'
-        );
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function mission(): HasOne
+    {
+        return $this->hasOne(Mission::class, 'offer_id');
     }
 }

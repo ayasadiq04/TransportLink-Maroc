@@ -21,19 +21,29 @@ return new class extends Migration
 
             $table->foreignId('vehicle_id')
                 ->constrained('vehicles')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
-            $table->decimal('price', 10, 2);
+            $table->decimal('amount', 10, 2);
 
             $table->text('message')->nullable();
+
+            $table->text('conditions')->nullable();
+
+            $table->string('estimated_delivery_time')->nullable();
 
             $table->enum('status', [
                 'pending',
                 'accepted',
-                'rejected'
+                'rejected',
+                'cancelled'
             ])->default('pending');
 
             $table->timestamps();
+
+            $table->unique([
+                'transport_request_id',
+                'transporteur_id'
+            ]);
         });
     }
 

@@ -1,0 +1,153 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('client.missions.index') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Mission #{{ $mission->id }}</h1>
+                <p class="text-sm text-gray-500 mt-1">Détail de votre livraison</p>
+            </div>
+        </div>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Statut + progression -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-semibold text-gray-900">Progression de la mission</h2>
+                    <x-status-badge :status="$mission->status" type="mission"/>
+                </div>
+
+                <!-- Barre de progression -->
+                <div class="relative">
+                    <div class="flex items-center justify-between relative z-10">
+                        @php
+                            $steps = ['pending' => 0, 'accepted' => 1, 'in_delivery' => 2, 'delivered' => 3];
+                            $currentStep = $steps[$mission->status] ?? 0;
+                        @endphp
+
+                        @foreach([
+                            ['label' => 'Créée', 'icon' => '📋'],
+                            ['label' => 'Acceptée', 'icon' => '✅'],
+                            ['label' => 'En livraison', 'icon' => '🚚'],
+                            ['label' => 'Livrée', 'icon' => '📦'],
+                        ] as $i => $step)
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg
+                                    {{ $i <= $currentStep ? 'bg-blue-600 shadow-lg shadow-blue-200' : 'bg-gray-100' }}">
+                                    {{ $step['icon'] }}
+                                </div>
+                                <p class="text-xs font-medium mt-2 {{ $i <= $currentStep ? 'text-blue-700' : 'text-gray-400' }}">
+                                    {{ $step['label'] }}
+                                </p>
+                            </div>
+                            @if($i < 3)
+                                <div class="flex-1 h-1 mx-2 rounded-full {{ $i < $currentStep ? 'bg-blue-600' : 'bg-gray-100' }} self-start mt-5"></div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-6">
+
+                <!-- Détails de la demande -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <h2 class="font-semibold text-gray-900 mb-4">Détails de la livraison</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-500">Marchandise</p>
+                            <p class="font-medium text-gray-900">{{ $mission->transportRequest->title }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <p class="text-xs text-gray-500">Départ</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $mission->transportRequest->departure_city }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Destination</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $mission->transportRequest->destination_city }}</p>
+                            </div>
+                        </div>
+                        @if($mission->planned_at)
+                            <div>
+                                <p class="text-xs text-gray-500">Date prévue</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $mission->planned_at->format('d/m/Y à H:i') }}</p>
+                            </div>
+                        @endif
+                        @if($mission->delivered_at)
+                            <div>
+                                <p class="text-xs text-gray-500">Date de livraison</p>
+                                <p class="text-sm font-medium text-emerald-700">{{ $mission->delivered_at->format('d/m/Y à H:i') }}</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Transporteur -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <h2 class="font-semibold text-gray-900 mb-4">Votre transporteur</h2>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">
+                            {{ strtoupper(substr($mission->transporteur->name, 0, 2)) }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $mission->transporteur->name }}</p>
+                            <p class="text-sm text-gray-500">Transporteur</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <p class="text-xs text-gray-500">Véhicule utilisé</p>
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ $mission->vehicle->brand }} {{ $mission->vehicle->model }}
+                                ({{ $mission->vehicle->registration_number }})
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Montant de l'offre</p>
+                            <p class="text-sm font-bold text-gray-900">{{ number_format($mission->offer->amount, 2) }} MAD</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Évaluation -->
+                @if($mission->status === 'delivered')
+                    <div class="sm:col-span-2">
+                        @if($mission->review)
+                            <div class="bg-emerald-50 rounded-2xl border border-emerald-200 p-6">
+                                <h2 class="font-semibold text-emerald-900 mb-3">Votre évaluation</h2>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg class="w-5 h-5 {{ $i <= $mission->review->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    @endfor
+                                    <span class="text-sm font-medium text-gray-700 ml-1">{{ $mission->review->rating }}/5</span>
+                                </div>
+                                @if($mission->review->comment)
+                                    <p class="text-sm text-gray-700">{{ $mission->review->comment }}</p>
+                                @endif
+                            </div>
+                        @else
+                            <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6">
+                                <h2 class="font-semibold text-amber-900 mb-2">Évaluez votre transporteur</h2>
+                                <p class="text-sm text-amber-700 mb-4">La mission est terminée. Partagez votre expérience pour aider la communauté.</p>
+                                <a href="{{ route('client.reviews.create', $mission) }}"
+                                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-xl hover:bg-amber-600 transition-colors">
+                                    ⭐ Laisser un avis
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+            </div>
+        </div>
+    </div>
+</x-app-layout>

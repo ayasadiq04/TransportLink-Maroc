@@ -1,363 +1,241 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Proposer une offre
-        </h2>
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+                Proposer une offre
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-500">
+                Répondez à la demande du client avec votre proposition.
+            </p>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-10">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
 
-            {{-- Messages --}}
-            @if (session('error'))
-                <div class="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
+            @if(session('error'))
+                <div class="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     {{ session('error') }}
                 </div>
             @endif
 
-            {{-- Erreurs validation --}}
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
+            @if($errors->any())
+                <div class="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     <ul class="list-disc pl-5">
-                        @foreach ($errors->all() as $error)
+                        @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
-            <div class="bg-white shadow-sm rounded-lg p-6">
+            <!-- Résumé de la demande -->
 
-                <h3 class="text-lg font-semibold mb-6">
-                    Détails de la demande
-                </h3>
+            <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="mb-5">
+                    <h3 class="text-lg font-bold text-gray-900">
+                        {{ $transportRequest->title }}
+                    </h3>
 
-                    <div>
-                        <p class="text-sm text-gray-500">
+                    <p class="mt-1 text-sm text-gray-500">
+                        Demande du client
+                    </p>
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs font-medium uppercase text-gray-400">
                             Départ
                         </p>
 
-                        <p class="font-semibold">
-                            {{ $transportRequest->departure }}
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ $transportRequest->departure_city }}
+                        </p>
+
+                        <p class="text-sm text-gray-500">
+                            {{ $transportRequest->departure_address }}
                         </p>
                     </div>
 
-                    <div>
-                        <p class="text-sm text-gray-500">
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs font-medium uppercase text-gray-400">
                             Destination
                         </p>
 
-                        <p class="font-semibold">
-                            {{ $transportRequest->destination }}
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ $transportRequest->destination_city }}
+                        </p>
+
+                        <p class="text-sm text-gray-500">
+                            {{ $transportRequest->destination_address }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs font-medium uppercase text-gray-400">
+                            Collecte
+                        </p>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ $transportRequest->pickup_at->format('d/m/Y H:i') }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs font-medium uppercase text-gray-400">
+                            Marchandise
+                        </p>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ ucfirst(str_replace('_', ' ', $transportRequest->goods_type)) }}
                         </p>
                     </div>
 
                 </div>
 
-                <form
-                    method="POST"
-                    action="{{ route('offers.store', $transportRequest) }}"
-                >
+            </div>
+
+            <!-- Formulaire -->
+
+            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+
+                <form method="POST"
+                      action="{{ route('offers.store', $transportRequest) }}">
 
                     @csrf
 
-                    {{-- Véhicule --}}
-                    <div class="mb-6">
+                    <!-- Vehicle -->
 
-                        <label
-                            for="vehicle_id"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
+                    <div class="mb-6">
+                        <label class="mb-2 block text-sm font-semibold text-gray-700">
                             Véhicule
                         </label>
 
-                        <select
-                            name="vehicle_id"
-                            id="vehicle_id"
-                            required
-                            class="w-full rounded-md border-gray-300 shadow-sm"
-                        >
+                        <select name="vehicle_id"
+                                class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
 
                             <option value="">
-                                -- Sélectionner un véhicule --
+                                Sélectionner un véhicule
                             </option>
 
-                            @foreach ($vehicles as $vehicle)
+                            @foreach($vehicles as $vehicle)
 
-                                <option
-                                    value="{{ $vehicle->id }}"
-                                    {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}
-                                >
-                                    {{ $vehicle->brand }}
-                                    {{ $vehicle->model }}
-                                    - {{ $vehicle->registration_number }}
+                                <option value="{{ $vehicle->id }}"
+                                    @selected(old('vehicle_id') == $vehicle->id)>
+
+                                    {{ $vehicle->type }}
+                                    -
+                                    {{ $vehicle->brand ?? 'Sans marque' }}
+                                    {{ $vehicle->model ?? '' }}
+                                    -
+                                    {{ $vehicle->capacity }} tonnes
+
                                 </option>
 
                             @endforeach
 
                         </select>
 
-                    </div>
-
-                    {{-- Prix --}}
-                    <div class="mb-6">
-
-                        <label
-                            for="price"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Prix proposé (DH)
-                        </label>
-
-                        <input
-                            type="number"
-                            name="price"
-                            id="price"
-                            value="{{ old('price') }}"
-                            min="0"
-                            step="0.01"
-                            required
-                            class="w-full rounded-md border-gray-300 shadow-sm"
-                            placeholder="Ex: 1500"
-                        >
-
-                    </div>
-
-                    {{-- Message --}}
-                    <div class="mb-6">
-
-                        <label
-                            for="message"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Message
-                        </label>
-
-                        <textarea
-                            name="message"
-                            id="message"
-                            rows="4"
-                            class="w-full rounded-md border-gray-300 shadow-sm"
-                            placeholder="Ajouter un message pour le client..."
-                        >{{ old('message') }}</textarea>
-
-                    </div>
-
-                    {{-- Buttons --}}
-                    <div class="flex gap-3">
-
-                        <button
-                            type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                        >
-                            Proposer l'offre
-                        </button>
-
-                        <a
-                            href="{{ route('transport-requests.index') }}"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                        >
-                            Annuler
-                        </a>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-    </div>
-
-</x-app-layout><x-app-layout>
-
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Proposer une offre
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
-            {{-- Messages d'erreur --}}
-            @if ($errors->any())
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            {{-- Informations de la demande --}}
-            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6">
-
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                    Demande de transport
-                </h3>
-
-                <div class="space-y-2 text-gray-700">
-                    <p>
-                        <strong>Titre :</strong>
-                        {{ $transportRequest->title }}
-                    </p>
-
-                    <p>
-                        <strong>Départ :</strong>
-                        {{ $transportRequest->departure_city }}
-                        -
-                        {{ $transportRequest->departure_address }}
-                    </p>
-
-                    <p>
-                        <strong>Destination :</strong>
-                        {{ $transportRequest->destination_city }}
-                        -
-                        {{ $transportRequest->destination_address }}
-                    </p>
-
-                    <p>
-                        <strong>Type de marchandise :</strong>
-                        {{ $transportRequest->goods_type }}
-                    </p>
-
-                    @if ($transportRequest->weight)
-                        <p>
-                            <strong>Poids :</strong>
-                            {{ $transportRequest->weight }}
-                        </p>
-                    @endif
-
-                    @if ($transportRequest->volume)
-                        <p>
-                            <strong>Volume :</strong>
-                            {{ $transportRequest->volume }}
-                        </p>
-                    @endif
-
-                    @if ($transportRequest->estimated_budget)
-                        <p>
-                            <strong>Budget estimé :</strong>
-                            {{ $transportRequest->estimated_budget }} DH
-                        </p>
-                    @endif
-                </div>
-
-            </div>
-
-            {{-- Formulaire --}}
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-
-                <h3 class="text-lg font-semibold text-gray-800 mb-6">
-                    Votre proposition
-                </h3>
-
-                <form
-                    method="POST"
-                    action="{{ route('offers.store', $transportRequest) }}"
-                >
-                    @csrf
-
-                    {{-- Véhicule --}}
-                    <div class="mb-6">
-                        <label
-                            for="vehicle_id"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Véhicule
-                        </label>
-
-                        <select
-                            name="vehicle_id"
-                            id="vehicle_id"
-                            required
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        >
-                            <option value="">
-                                -- Sélectionner un véhicule --
-                            </option>
-
-                            @foreach ($vehicles as $vehicle)
-                                <option
-                                    value="{{ $vehicle->id }}"
-                                    {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}
-                                >
-                                    {{ $vehicle->brand }}
-                                    {{ $vehicle->model }}
-                                    - {{ $vehicle->registration_number }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @if ($vehicles->isEmpty())
+                        @if($vehicles->isEmpty())
                             <p class="mt-2 text-sm text-red-600">
-                                Vous n'avez aucun véhicule enregistré.
-                                Ajoutez d'abord un véhicule.
+                                Aucun véhicule disponible.
+                                <a href="{{ route('vehicles.create') }}"
+                                   class="font-semibold underline">
+                                    Ajouter un véhicule
+                                </a>
                             </p>
                         @endif
+
+                        @error('vehicle_id')
+                            <p class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    {{-- Prix --}}
+                    <!-- Amount -->
+
                     <div class="mb-6">
-                        <label
-                            for="price"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Prix proposé (DH)
+                        <label class="mb-2 block text-sm font-semibold text-gray-700">
+                            Montant proposé (MAD)
                         </label>
 
-                        <input
-                            type="number"
-                            name="price"
-                            id="price"
-                            value="{{ old('price') }}"
-                            min="0"
-                            step="0.01"
-                            required
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="Ex : 1500"
-                        >
+                        <input type="number"
+                               name="amount"
+                               step="0.01"
+                               min="0"
+                               value="{{ old('amount') }}"
+                               placeholder="Ex : 2500"
+                               class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+
+                        @error('amount')
+                            <p class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    {{-- Message --}}
+                    <!-- Delivery time -->
+
                     <div class="mb-6">
-                        <label
-                            for="message"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
+                        <label class="mb-2 block text-sm font-semibold text-gray-700">
+                            Délai estimé de livraison
+                        </label>
+
+                        <input type="text"
+                               name="estimated_delivery_time"
+                               value="{{ old('estimated_delivery_time') }}"
+                               placeholder="Ex : 24 heures"
+                               class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Message -->
+
+                    <div class="mb-6">
+                        <label class="mb-2 block text-sm font-semibold text-gray-700">
                             Message
                         </label>
 
-                        <textarea
-                            name="message"
-                            id="message"
-                            rows="4"
-                            maxlength="1000"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="Ajoutez un message pour le client..."
-                        >{{ old('message') }}</textarea>
+                        <textarea name="message"
+                                  rows="4"
+                                  placeholder="Présentez votre proposition au client..."
+                                  class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">{{ old('message') }}</textarea>
+
+                        @error('message')
+                            <p class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    {{-- Buttons --}}
-                    <div class="flex items-center gap-3">
+                    <!-- Conditions -->
 
-                        <button
-                            type="submit"
-                            class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                            {{ $vehicles->isEmpty() ? 'disabled' : '' }}
-                        >
-                            Proposer l'offre
+                    <div class="mb-8">
+                        <label class="mb-2 block text-sm font-semibold text-gray-700">
+                            Conditions
+                        </label>
+
+                        <textarea name="conditions"
+                                  rows="3"
+                                  placeholder="Ex : Paiement à la livraison..."
+                                  class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">{{ old('conditions') }}</textarea>
+                    </div>
+
+                    <!-- Buttons -->
+
+                    <div class="flex flex-col gap-3 sm:flex-row">
+
+                        <button type="submit"
+                                class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                            Envoyer mon offre
                         </button>
 
-                        <a
-                            href="{{ route('transport-requests.index') }}"
-                            class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                        >
+                        <a href="{{ route('transporteur.requests.index') }}"
+                           class="rounded-xl bg-gray-100 px-6 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-200">
                             Annuler
                         </a>
 
