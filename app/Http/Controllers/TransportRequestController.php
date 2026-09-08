@@ -17,7 +17,7 @@ class TransportRequestController extends Controller
             ->latest()
             ->get();
 
-        return view('transport-requests.index', compact('requests'));
+        return view('client.transport-requests.index', compact('requests'));
     }
 
     /**
@@ -35,11 +35,11 @@ class TransportRequestController extends Controller
     }
 
     /**
-     * Client — formulaire de création.
+     * Client — formulaire de creation.
      */
     public function create()
     {
-        return view('transport-requests.create');
+        return view('client.transport-requests.create');
     }
 
     /**
@@ -53,25 +53,34 @@ class TransportRequestController extends Controller
             'departure_address'   => 'required|string|max:255',
             'destination_city'    => 'required|string|max:255',
             'destination_address' => 'required|string|max:255',
-            'pickup_at'           => 'required|date',
+            'pickup_at'           => 'required|date|after:now',
             'goods_type'          => 'required|in:palette,vrac,frigorifique,liquide,colis_volumineux,autre',
             'weight'              => 'nullable|numeric|min:0',
             'volume'              => 'nullable|numeric|min:0',
-            'instructions'        => 'nullable|string',
+            'instructions'        => 'nullable|string|max:2000',
             'estimated_budget'    => 'nullable|numeric|min:0',
+        ], [
+            'title.required'            => 'Le titre est obligatoire.',
+            'departure_city.required'   => 'La ville de départ est obligatoire.',
+            'destination_city.required' => 'La ville de destination est obligatoire.',
+            'pickup_at.required'        => 'La date d\'enlèvement est obligatoire.',
+            'pickup_at.after'           => 'La date d\'enlèvement doit être dans le futur.',
+            'goods_type.required'       => 'Le type de marchandise est obligatoire.',
+            'goods_type.in'             => 'Type de marchandise invalide.',
         ]);
 
         $validated['client_id'] = auth()->id();
+        $validated['status']    = 'pending';
 
         TransportRequest::create($validated);
 
         return redirect()
-            ->route('transport-requests.index')
+            ->route('client.transport-requests.index')
             ->with('success', 'Demande créée avec succès. Les transporteurs peuvent maintenant proposer des offres.');
     }
 
     /**
-     * Client — détail d'une demande.
+     * Client — detail d'une demande.
      */
     public function show(TransportRequest $transportRequest)
     {
@@ -79,11 +88,11 @@ class TransportRequestController extends Controller
 
         $transportRequest->load(['offers.transporteur', 'offers.vehicle', 'mission']);
 
-        return view('transport-requests.show', compact('transportRequest'));
+        return view('client.transport-requests.show', compact('transportRequest'));
     }
 
     /**
-     * Transporteur — détail d'une demande disponible.
+     * Transporteur — detail d'une demande disponible.
      */
     public function showForTransporteur(TransportRequest $transportRequest)
     {
@@ -91,7 +100,7 @@ class TransportRequestController extends Controller
 
         $transportRequest->load(['client', 'offers']);
 
-        // Vérifier si le transporteur a déjà une offre sur cette demande
+        // Verifier si le transporteur a deja une offre sur cette demande
         $myOffer = $transportRequest->offers()
             ->where('transporteur_id', auth()->id())
             ->first();
@@ -106,18 +115,17 @@ class TransportRequestController extends Controller
     {
         abort_unless($transportRequest->client_id === auth()->id(), 403);
 
-        // On ne peut modifier qu'une demande en attente
         if ($transportRequest->status !== 'pending') {
             return redirect()
-                ->route('transport-requests.show', $transportRequest)
+                ->route('client.transport-requests.show', $transportRequest)
                 ->with('error', 'Cette demande ne peut plus être modifiée.');
         }
 
-        return view('transport-requests.edit', compact('transportRequest'));
+        return view('client.transport-requests.edit', compact('transportRequest'));
     }
 
     /**
-     * Client — mettre à jour une demande.
+     * Client — mettre a jour une demande.
      */
     public function update(Request $request, TransportRequest $transportRequest)
     {
@@ -125,7 +133,7 @@ class TransportRequestController extends Controller
 
         if ($transportRequest->status !== 'pending') {
             return redirect()
-                ->route('transport-requests.show', $transportRequest)
+                ->route('client.transport-requests.show', $transportRequest)
                 ->with('error', 'Cette demande ne peut plus être modifiée.');
         }
 
@@ -139,14 +147,14 @@ class TransportRequestController extends Controller
             'goods_type'          => 'required|in:palette,vrac,frigorifique,liquide,colis_volumineux,autre',
             'weight'              => 'nullable|numeric|min:0',
             'volume'              => 'nullable|numeric|min:0',
-            'instructions'        => 'nullable|string',
+            'instructions'        => 'nullable|string|max:2000',
             'estimated_budget'    => 'nullable|numeric|min:0',
         ]);
 
         $transportRequest->update($validated);
 
         return redirect()
-            ->route('transport-requests.index')
+            ->route('client.transport-requests.index')
             ->with('success', 'Demande modifiée avec succès.');
     }
 
@@ -159,14 +167,14 @@ class TransportRequestController extends Controller
 
         if ($transportRequest->status !== 'pending') {
             return redirect()
-                ->route('transport-requests.index')
+                ->route('client.transport-requests.index')
                 ->with('error', 'Cette demande ne peut plus être supprimée.');
         }
 
         $transportRequest->delete();
 
         return redirect()
-            ->route('transport-requests.index')
+            ->route('client.transport-requests.index')
             ->with('success', 'Demande supprimée avec succès.');
     }
 }

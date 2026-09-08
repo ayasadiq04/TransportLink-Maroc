@@ -41,12 +41,17 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/dashboard', function () {
         $user = auth()->user();
         $stats = [
-            'requests'          => $user->transportRequests()->count(),
-            'pending_requests'  => $user->transportRequests()->where('status', 'pending')->count(),
-            'missions'          => $user->missionsAsClient()->count(),
-            'active_missions'   => $user->missionsAsClient()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
+            'requests'         => $user->transportRequests()->count(),
+            'pending_requests' => $user->transportRequests()->where('status', 'pending')->count(),
+            'requests_with_offers' => $user->transportRequests()
+                ->whereHas('offers')
+                ->where('status', 'pending')
+                ->count(),
+            'missions'         => $user->missionsAsClient()->count(),
+            'active_missions'  => $user->missionsAsClient()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
+            'delivered_missions' => $user->missionsAsClient()->where('status', 'delivered')->count(),
         ];
-        $recentRequests = $user->transportRequests()->latest()->limit(3)->get();
+        $recentRequests = $user->transportRequests()->withCount('offers')->latest()->limit(3)->get();
         $recentMissions = $user->missionsAsClient()->with('transporteur')->latest()->limit(3)->get();
         return view('client.dashboard', compact('stats', 'recentRequests', 'recentMissions'));
     })->name('dashboard');
@@ -69,25 +74,9 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/missions', [MissionController::class, 'clientIndex'])->name('missions.index');
     Route::get('/missions/{mission}', [MissionController::class, 'clientShow'])->name('missions.show');
 
-    // Évaluations
+    // Evaluations
     Route::get('/missions/{mission}/review', [ReviewController::class, 'create'])->name('reviews.create');
     Route::post('/missions/{mission}/review', [ReviewController::class, 'store'])->name('reviews.store');
-});
-
-// ─── Anciennes routes client (compatibilité) ───────────────────────────────
-Route::middleware(['auth', 'role:client'])->group(function () {
-    Route::get('/transport-requests', [TransportRequestController::class, 'index'])
-        ->name('transport-requests.index');
-    Route::get('/transport-requests/create', [TransportRequestController::class, 'create'])
-        ->name('transport-requests.create');
-    Route::post('/transport-requests', [TransportRequestController::class, 'store'])
-        ->name('transport-requests.store');
-    Route::get('/transport-requests/{transportRequest}/edit', [TransportRequestController::class, 'edit'])
-        ->name('transport-requests.edit');
-    Route::put('/transport-requests/{transportRequest}', [TransportRequestController::class, 'update'])
-        ->name('transport-requests.update');
-    Route::delete('/transport-requests/{transportRequest}', [TransportRequestController::class, 'destroy'])
-        ->name('transport-requests.destroy');
 });
 
 // ─── TRANSPORTEUR ─────────────────────────────────────────────────────────────
@@ -97,21 +86,23 @@ Route::middleware(['auth', 'role:transporteur'])->prefix('transporteur')->name('
     Route::get('/dashboard', function () {
         $user = auth()->user();
         $stats = [
-            'vehicles'         => $user->vehicles()->count(),
+            'vehicles'           => $user->vehicles()->count(),
             'available_vehicles' => $user->vehicles()->where('available', true)->count(),
-            'offers'           => $user->offers()->count(),
-            'pending_offers'   => $user->offers()->where('status', 'pending')->count(),
-            'missions'         => $user->missionsAsTransporteur()->count(),
-            'active_missions'  => $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
-            'average_rating'   => $user->averageRating(),
-            'total_reviews'    => $user->reviewsReceived()->count(),
+            'offers'             => $user->offers()->count(),
+            'pending_offers'     => $user->offers()->where('status', 'pending')->count(),
+            'accepted_offers'    => $user->offers()->where('status', 'accepted')->count(),
+            'missions'           => $user->missionsAsTransporteur()->count(),
+            'active_missions'    => $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
+            'delivered_missions' => $user->missionsAsTransporteur()->where('status', 'delivered')->count(),
+            'average_rating'     => $user->averageRating(),
+            'total_reviews'      => $user->reviewsReceived()->count(),
         ];
         $recentMissions = $user->missionsAsTransporteur()->with('client')->latest()->limit(3)->get();
         $availableRequests = \App\Models\TransportRequest::where('status', 'pending')->count();
         return view('transporteur.dashboard', compact('stats', 'recentMissions', 'availableRequests'));
     })->name('dashboard');
 
-    // Véhicules
+    // Vehicules (CRUD complet)
     Route::resource('vehicles', VehicleController::class)->except(['show']);
 
     // Demandes disponibles
@@ -130,29 +121,36 @@ Route::middleware(['auth', 'role:transporteur'])->prefix('transporteur')->name('
     Route::post('/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
 });
 
-// ─── Anciennes routes transporteur (compatibilité) ─────────────────────────
-Route::middleware(['auth', 'role:transporteur'])->group(function () {
-    Route::resource('vehicles', VehicleController::class)->except(['show']);
-    Route::get('/transporteur/requests', [TransportRequestController::class, 'availableForTransporteur'])
-        ->name('transporteur.requests.index');
-    Route::get('/transporteur/requests/{transportRequest}/offer', [OfferController::class, 'create'])
-        ->name('offers.create');
-    Route::post('/transporteur/requests/{transportRequest}/offer', [OfferController::class, 'store'])
-        ->name('offers.store');
-});
-
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Utilisateurs
     Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+    Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('users.show');
+    Route::patch('/users/{user}/toggle', [AdminController::class, 'toggleUser'])->name('users.toggle');
+    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+
+    // Demandes
     Route::get('/transport-requests', [AdminController::class, 'transportRequests'])->name('transport-requests.index');
     Route::get('/transport-requests/{transportRequest}', [AdminController::class, 'showTransportRequest'])->name('transport-requests.show');
+    Route::delete('/transport-requests/{transportRequest}', [AdminController::class, 'destroyTransportRequest'])->name('transport-requests.destroy');
+
+    // Offres
     Route::get('/offers', [AdminController::class, 'offers'])->name('offers.index');
+
+    // Missions
     Route::get('/missions', [AdminController::class, 'missions'])->name('missions.index');
+
+    // Vehicules
+    Route::get('/vehicles', [AdminController::class, 'vehicles'])->name('vehicles.index');
+
+    // Reviews
     Route::get('/reviews', [AdminController::class, 'reviews'])->name('reviews.index');
+    Route::delete('/reviews/{review}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
 });
 
-// ─── Profil public transporteur (accessible à tous les authentifiés) ──────────
+// ─── Profil public transporteur (accessible a tous les authentifies) ──────────
 Route::middleware('auth')->get('/transporteurs/{id}/profile', [ReviewController::class, 'transporteurProfile'])
     ->name('transporteur.profile');
 

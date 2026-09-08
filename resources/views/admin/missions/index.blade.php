@@ -32,21 +32,21 @@
                             @foreach($missions as $mission)
                                 <tr class="hover:bg-gray-50/80 transition">
                                     <td class="px-6 py-4">
-                                        <div class="font-semibold text-gray-900">{{ $mission->offer->transportRequest->title }}</div>
+                                        <div class="font-semibold text-gray-900">{{ $mission->transportRequest?->title ?? $mission->offer?->transportRequest?->title ?? 'Demande #'.$mission->transport_request_id }}</div>
                                         <div class="text-xs text-gray-500">
-                                            {{ $mission->offer->transportRequest->departure_city }} &rarr; {{ $mission->offer->transportRequest->arrival_city }}
+                                            {{ $mission->transportRequest?->departure_city ?? $mission->offer?->transportRequest?->departure_city ?? '—' }} &rarr; {{ $mission->transportRequest?->destination_city ?? $mission->offer?->transportRequest?->destination_city ?? '—' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-700">
-                                        <div class="font-medium text-gray-900">{{ $mission->offer->transportRequest->client->name }}</div>
-                                        <div class="text-gray-400">{{ $mission->offer->transportRequest->client->email }}</div>
+                                        <div class="font-medium text-gray-900">{{ $mission->client?->name ?? $mission->offer?->transportRequest?->client?->name ?? '—' }}</div>
+                                        <div class="text-gray-400">{{ $mission->client?->email ?? $mission->offer?->transportRequest?->client?->email ?? '—' }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-700">
-                                        <div class="font-medium text-gray-900">{{ $mission->transporteur->name }}</div>
-                                        <div class="text-gray-400">{{ $mission->transporteur->email }}</div>
+                                        <div class="font-medium text-gray-900">{{ $mission->transporteur?->name ?? '—' }}</div>
+                                        <div class="text-gray-400">{{ $mission->transporteur?->email ?? '—' }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-xs font-bold text-gray-900 whitespace-nowrap">
-                                        {{ number_format($mission->offer->price, 2) }} DH
+                                        {{ number_format($mission->offer?->amount ?? 0, 2) }} DH
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
                                         {{ $mission->vehicle ? ($mission->vehicle->brand . ' ' . $mission->vehicle->model) : '—' }}
