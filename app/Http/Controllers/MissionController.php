@@ -67,24 +67,36 @@ class MissionController extends Controller
         $this->authorize('updateStatus', $mission);
 
         $validated = $request->validate([
-            'status' => 'required|in:accepted,in_delivery,delivered,cancelled',
+            'status' => 'required|in:pending,accepted,in_delivery,delivered,cancelled',
+        ], [
+            'status.required' => 'Le statut est obligatoire.',
+            'status.in'       => 'Statut invalide sélectionné.',
         ]);
 
         $allowedTransitions = [
-            'pending'     => ['accepted', 'cancelled'],
+            'pending'     => ['accepted', 'in_delivery', 'cancelled'],
             'accepted'    => ['in_delivery', 'cancelled'],
-            'in_delivery' => ['delivered'],
+            'in_delivery' => ['delivered', 'cancelled'],
         ];
 
         $currentStatus = $mission->status;
+        $targetStatus  = $validated['status'];
 
-        if (!isset($allowedTransitions[$currentStatus]) ||
-            !in_array($validated['status'], $allowedTransitions[$currentStatus])) {
-            return back()->with('error', 'Transition de statut non autorisée.');
+        // Si le statut ne change pas, retourner simplement avec succès
+        if ($currentStatus === $targetStatus) {
+            return redirect()
+                ->route('transporteur.missions.show', $mission)
+                ->with('success', 'Statut inchangé.');
         }
 
-        $data = ['status' => $validated['status']];
+        if (!isset($allowedTransitions[$currentStatus]) ||
+            !in_array($targetStatus, $allowedTransitions[$currentStatus])) {
+            return back()->with('error', 'Transition de statut non autorisée pour cette mission.');
+        }
 
+        $data = ['status' => $targetStatus];
+
+<<<<<<< HEAD
         if ($validated['status'] === 'delivered') {
             $data['delivered_at'] = now();
             $mission->vehicle()->update(['available' => true]);
@@ -93,12 +105,34 @@ class MissionController extends Controller
 
         if ($validated['status'] === 'cancelled') {
             $mission->vehicle()->update(['available' => true]);
+=======
+        // Si livrée, enregistrer la date de livraison, synchroniser la demande et libérer le véhicule
+        if ($targetStatus === 'delivered') {
+            $data['delivered_at'] = now();
+
+            // Mettre à jour la demande en 'completed'
+            $mission->transportRequest()->update(['status' => 'completed']);
+
+            // Remettre le véhicule disponible
+            if ($mission->vehicle_id) {
+                $mission->vehicle()->update(['available' => true]);
+            }
+        }
+
+        // Si annulée, remettre le véhicule disponible et la demande en 'cancelled'
+        if ($targetStatus === 'cancelled') {
+            $mission->transportRequest()->update(['status' => 'cancelled']);
+
+            if ($mission->vehicle_id) {
+                $mission->vehicle()->update(['available' => true]);
+            }
+>>>>>>> 230d605c40ca0950958722dca40f541066fdc464
         }
 
         $mission->update($data);
 
         return redirect()
             ->route('transporteur.missions.show', $mission)
-            ->with('success', 'Statut de la mission mis à jour.');
+            ->with('success', 'Statut de la mission mis à jour avec succès.');
     }
 }

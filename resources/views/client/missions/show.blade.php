@@ -1,14 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('client.missions.index') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </a>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('client.missions.index') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Mission #{{ $mission->id }}</h1>
+                    <p class="text-sm text-gray-500 mt-1">Détail de votre livraison</p>
+                </div>
+            </div>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Mission #{{ $mission->id }}</h1>
-                <p class="text-sm text-gray-500 mt-1">Détail de votre livraison</p>
+                <a href="{{ route('client.transport-requests.show', $mission->transportRequest) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 shadow-sm transition">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Voir la demande
+                </a>
             </div>
         </div>
     </x-slot>
@@ -58,7 +69,13 @@
 
                 <!-- Détails de la demande -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                    <h2 class="font-semibold text-gray-900 mb-4">Détails de la livraison</h2>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-semibold text-gray-900">Détails de la livraison</h2>
+                        <a href="{{ route('client.transport-requests.show', $mission->transportRequest) }}"
+                           class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+                            Voir la demande &rarr;
+                        </a>
+                    </div>
                     <div class="space-y-3">
                         <div>
                             <p class="text-xs text-gray-500">Marchandise</p>

@@ -16,7 +16,51 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Filtres / Recherche -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <form method="GET" action="{{ route('client.transport-requests.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Statut</label>
+                        <select name="status" class="w-full text-sm rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending" @selected(request('status') === 'pending')>En attente</option>
+                            <option value="accepted" @selected(request('status') === 'accepted')>Acceptée</option>
+                            <option value="completed" @selected(request('status') === 'completed')>Terminée</option>
+                            <option value="cancelled" @selected(request('status') === 'cancelled')>Annulée</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Ville de départ</label>
+                        <input type="text" name="departure_city" value="{{ request('departure_city') }}" placeholder="Ex: Casablanca" class="w-full text-sm rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Ville de destination</label>
+                        <input type="text" name="destination_city" value="{{ request('destination_city') }}" placeholder="Ex: Tanger" class="w-full text-sm rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Type de marchandise</label>
+                        <select name="goods_type" class="w-full text-sm rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Tous les types</option>
+                            <option value="palette" @selected(request('goods_type') === 'palette')>Palette</option>
+                            <option value="vrac" @selected(request('goods_type') === 'vrac')>Vrac</option>
+                            <option value="frigorifique" @selected(request('goods_type') === 'frigorifique')>Frigorifique</option>
+                            <option value="liquide" @selected(request('goods_type') === 'liquide')>Liquide</option>
+                            <option value="colis_volumineux" @selected(request('goods_type') === 'colis_volumineux')>Colis volumineux</option>
+                            <option value="autre" @selected(request('goods_type') === 'autre')>Autre</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl text-sm transition shadow-sm">
+                            Filtrer
+                        </button>
+                        <a href="{{ route('client.transport-requests.index') }}" class="px-3 py-2 border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium">
+                            Réinitialiser
+                        </a>
+                    </div>
+                </form>
+            </div>
 
             @if($requests->count())
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

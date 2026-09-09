@@ -32,7 +32,9 @@
                             @foreach($users as $user)
                                 <tr class="hover:bg-gray-50/80 transition">
                                     <td class="px-6 py-4">
-                                        <div class="font-semibold text-gray-900">{{ $user->name }}</div>
+                                        <a href="{{ route('admin.users.show', $user) }}" class="font-semibold text-gray-900 hover:text-blue-600 transition">
+                                            {{ $user->name }}
+                                        </a>
                                         <div class="text-xs text-gray-500">{{ $user->email }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -62,9 +64,9 @@
                                     <td class="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
                                         {{ $user->created_at->format('d/m/Y') }}
                                     </td>
-                                    <td class="px-6 py-4 text-right text-xs whitespace-nowrap">
+                                    <td class="px-6 py-4 text-right text-xs whitespace-nowrap space-x-2">
                                         @if($user->id !== auth()->id())
-                                            <form action="{{ route('admin.users.delete', $user) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');" class="inline">
+                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-900 font-semibold">
