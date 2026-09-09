@@ -8,28 +8,65 @@ use Illuminate\Http\Request;
 class TransportRequestController extends Controller
 {
     /**
-     * Client — liste de ses demandes.
+     * Client — liste de ses demandes avec filtres.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $requests = TransportRequest::where('client_id', auth()->id())
-            ->withCount('offers')
-            ->latest()
-            ->get();
+        $query = TransportRequest::where('client_id', auth()->id())
+            ->withCount('offers');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('departure_city')) {
+            $query->where('departure_city', 'like', '%' . $request->departure_city . '%');
+        }
+
+        if ($request->filled('destination_city')) {
+            $query->where('destination_city', 'like', '%' . $request->destination_city . '%');
+        }
+
+        if ($request->filled('goods_type')) {
+            $query->where('goods_type', $request->goods_type);
+        }
+
+        $requests = $query->latest()->get();
 
         return view('client.transport-requests.index', compact('requests'));
     }
 
     /**
-     * Transporteur — demandes disponibles (status pending).
+     * Transporteur — demandes disponibles (status pending) avec filtres.
      */
-    public function availableForTransporteur()
+    public function availableForTransporteur(Request $request)
     {
-        $requests = TransportRequest::where('status', 'pending')
+        $query = TransportRequest::where('status', 'pending')
             ->with('client')
-            ->withCount('offers')
-            ->latest()
-            ->get();
+            ->withCount('offers');
+
+        // Filtre départ (accepte 'departure' ou 'departure_city')
+        $departure = $request->input('departure', $request->input('departure_city'));
+        if (!empty($departure)) {
+            $query->where('departure_city', 'like', '%' . trim($departure) . '%');
+        }
+
+        // Filtre arrivée (accepte 'arrival' ou 'destination_city')
+        $arrival = $request->input('arrival', $request->input('destination_city'));
+        if (!empty($arrival)) {
+            $query->where('destination_city', 'like', '%' . trim($arrival) . '%');
+        }
+
+        // Filtre marchandise (accepte 'cargo' ou 'goods_type')
+        $cargo = $request->input('cargo', $request->input('goods_type'));
+        if (!empty($cargo)) {
+            $query->where(function ($q) use ($cargo) {
+                $q->where('goods_type', 'like', '%' . trim($cargo) . '%')
+                  ->orWhere('title', 'like', '%' . trim($cargo) . '%');
+            });
+        }
+
+        $requests = $query->latest()->get();
 
         return view('transporteur.requests.index', compact('requests'));
     }
@@ -92,15 +129,28 @@ class TransportRequestController extends Controller
     }
 
     /**
-     * Transporteur — detail d'une demande disponible.
+     * Transporteur — detail d'une demande disponible ou liée à ses offres/missions.
      */
     public function showForTransporteur(TransportRequest $transportRequest)
     {
-        abort_if($transportRequest->status !== 'pending', 404);
+        // Un transporteur peut voir la demande si elle est disponible (pending),
+        // OU s'il a déjà soumis une offre pour cette demande,
+        // OU s'il est le transporteur assigné à la mission associée.
+        $hasOffer = $transportRequest->offers()
+            ->where('transporteur_id', auth()->id())
+            ->exists();
 
-        $transportRequest->load(['client', 'offers']);
+        $isAssignedMission = $transportRequest->mission()
+            ->where('transporteur_id', auth()->id())
+            ->exists();
 
-        // Verifier si le transporteur a deja une offre sur cette demande
+        if ($transportRequest->status !== 'pending' && !$hasOffer && !$isAssignedMission) {
+            abort(404);
+        }
+
+        $transportRequest->load(['client', 'offers.transporteur', 'offers.vehicle', 'mission']);
+
+        // Récupérer l'offre de ce transporteur sur cette demande
         $myOffer = $transportRequest->offers()
             ->where('transporteur_id', auth()->id())
             ->first();

@@ -68,29 +68,29 @@
                                 <!-- Trajet -->
                                 <div class="bg-gray-50 rounded-lg p-3 mb-4 space-y-2 text-sm">
                                     <div class="flex items-center gap-2 text-gray-700">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                                        <span class="font-medium">Départ :</span>
-                                        <span>{{ $req->departure_city }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-gray-700">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                                        <span class="font-medium">Arrivée :</span>
-                                        <span>{{ $req->arrival_city }}</span>
-                                    </div>
+                                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                         <span class="font-medium">Départ :</span>
+                                         <span>{{ $req->departure_city }}</span>
+                                     </div>
+                                     <div class="flex items-center gap-2 text-gray-700">
+                                         <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                         <span class="font-medium">Arrivée :</span>
+                                         <span>{{ $req->destination_city }}</span>
+                                     </div>
                                 </div>
 
                                 <!-- Détails cargaison -->
                                 <div class="space-y-1 text-xs text-gray-600 mb-4">
-                                    <p><span class="font-semibold">Marchandise :</span> {{ $req->cargo_type ?? 'Non spécifié' }}</p>
-                                    @if($req->weight)
-                                        <p><span class="font-semibold">Poids :</span> {{ $req->weight }} kg</p>
-                                    @endif
-                                    @if($req->deadline_date)
-                                        <p><span class="font-semibold">Date souhaitée :</span> {{ \Carbon\Carbon::parse($req->deadline_date)->format('d/m/Y') }}</p>
-                                    @endif
-                                    @if($req->budget)
-                                        <p><span class="font-semibold">Budget indicatif :</span> <span class="text-emerald-600 font-bold">{{ number_format($req->budget, 2) }} DH</span></p>
-                                    @endif
+                                     <p><span class="font-semibold">Marchandise :</span> {{ ucfirst(str_replace('_', ' ', $req->goods_type ?? 'Standard')) }}</p>
+                                     @if($req->weight)
+                                         <p><span class="font-semibold">Poids :</span> {{ $req->weight }} tonnes</p>
+                                     @endif
+                                     @if($req->pickup_at)
+                                         <p><span class="font-semibold">Date prévue :</span> {{ $req->pickup_at->format('d/m/Y H:i') }}</p>
+                                     @endif
+                                     @if($req->estimated_budget)
+                                         <p><span class="font-semibold">Budget indicatif :</span> <span class="text-emerald-600 font-bold">{{ number_format($req->estimated_budget, 2) }} MAD</span></p>
+                                     @endif
                                 </div>
                             </div>
 

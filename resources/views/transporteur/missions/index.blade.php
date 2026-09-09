@@ -29,24 +29,24 @@
                                     <x-status-badge :status="$mission->status" type="mission" />
                                 </div>
 
-                                <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $mission->offer->transportRequest->title }}</h3>
-                                <p class="text-xs text-gray-500 mb-4">Client : {{ $mission->offer->transportRequest->client->name }}</p>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $mission->transportRequest->title ?? $mission->offer->transportRequest->title }}</h3>
+                                <p class="text-xs text-gray-500 mb-4">Client : {{ $mission->client->name ?? $mission->offer->transportRequest->client->name }}</p>
 
                                 <div class="bg-gray-50 rounded-lg p-3 space-y-2 text-sm mb-4">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Trajet :</span>
-                                        <span class="font-medium text-gray-900">{{ $mission->offer->transportRequest->departure_city }} &rarr; {{ $mission->offer->transportRequest->arrival_city }}</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Montant convenu :</span>
-                                        <span class="font-bold text-emerald-600">{{ number_format($mission->offer->price, 2) }} DH</span>
-                                    </div>
-                                    @if($mission->vehicle)
-                                        <div class="flex items-center justify-between text-xs">
-                                            <span class="text-gray-500">Véhicule :</span>
-                                            <span class="text-gray-700">{{ $mission->vehicle->brand }} ({{ $mission->vehicle->license_plate }})</span>
-                                        </div>
-                                    @endif
+                                     <div class="flex items-center justify-between text-xs">
+                                         <span class="text-gray-500">Trajet :</span>
+                                         <span class="font-medium text-gray-900">{{ $mission->transportRequest->departure_city ?? $mission->offer->transportRequest->departure_city }} &rarr; {{ $mission->transportRequest->destination_city ?? $mission->offer->transportRequest->destination_city }}</span>
+                                     </div>
+                                     <div class="flex items-center justify-between text-xs">
+                                         <span class="text-gray-500">Montant convenu :</span>
+                                         <span class="font-bold text-emerald-600">{{ number_format($mission->offer->amount ?? 0, 2) }} MAD</span>
+                                     </div>
+                                     @if($mission->vehicle)
+                                         <div class="flex items-center justify-between text-xs">
+                                             <span class="text-gray-500">Véhicule :</span>
+                                             <span class="text-gray-700">{{ $mission->vehicle->brand }} {{ $mission->vehicle->model }} ({{ $mission->vehicle->registration_number }})</span>
+                                         </div>
+                                     @endif
                                 </div>
                             </div>
 

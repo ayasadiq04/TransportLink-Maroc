@@ -118,7 +118,7 @@ Route::middleware(['auth', 'role:transporteur'])->prefix('transporteur')->name('
     // Missions
     Route::get('/missions', [MissionController::class, 'transporteurIndex'])->name('missions.index');
     Route::get('/missions/{mission}', [MissionController::class, 'transporteurShow'])->name('missions.show');
-    Route::post('/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
+    Route::match(['post', 'patch'], '/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
 });
 
 // ─── ADMIN ────────────────────────────────────────────────────────────────────

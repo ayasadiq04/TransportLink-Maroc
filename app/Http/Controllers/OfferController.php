@@ -18,7 +18,7 @@ class OfferController extends Controller
     public function index()
     {
         $offers = Offer::where('transporteur_id', Auth::id())
-            ->with(['transportRequest', 'vehicle'])
+            ->with(['transportRequest.client', 'vehicle'])
             ->latest()
             ->get();
 
