@@ -1,3 +1,4 @@
+﻿
 <?php
 
 namespace App\Http\Controllers;
@@ -46,14 +47,6 @@ class AdminController extends Controller
      */
     public function users()
     {
-<<<<<<< HEAD
-        $clients       = User::where('role', 'client')->latest()->get();
-        $transporteurs = User::where('role', 'transporteur')->latest()->get();
-        $admins        = User::where('role', 'admin')->latest()->get();
-        $users         = User::latest()->get();
-
-        return view('admin.users.index', compact('clients', 'transporteurs', 'admins', 'users'));
-=======
         $users = User::withCount([
             'transportRequests',
             'vehicles',
@@ -72,13 +65,20 @@ class AdminController extends Controller
      */
     public function showUser(User $user)
     {
-        $user->load(['transportRequests', 'vehicles', 'offers', 'missionsAsClient', 'missionsAsTransporteur', 'reviewsReceived']);
+        $user->load([
+            'transportRequests',
+            'vehicles',
+            'offers',
+            'missionsAsClient',
+            'missionsAsTransporteur',
+            'reviewsReceived'
+        ]);
+
         return view('admin.users.show', compact('user'));
     }
 
     /**
      * Activer/Desactiver un utilisateur (si champ active existe).
-     * Ici on change le role pour marquer desactive si besoin.
      */
     public function toggleUser(User $user)
     {
@@ -87,7 +87,6 @@ class AdminController extends Controller
             return back()->with('error', 'Vous ne pouvez pas modifier votre propre compte.');
         }
 
-        // Toggle: on utilise un champ 'active' si dispo, sinon on simule
         if ($user->hasAttribute('active')) {
             $user->update(['active' => !$user->active]);
         }
@@ -96,18 +95,38 @@ class AdminController extends Controller
     }
 
     /**
-     * Supprimer un utilisateur.
+     * Administrateur — supprimer un utilisateur.
      */
     public function destroyUser(User $user)
     {
+        // Empecher de supprimer son propre compte
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'Vous ne pouvez pas supprimer votre propre compte administrateur.');
+        }
+
+        // Empecher la suppression d'un utilisateur avec des missions en cours
+        $activeMissions =
+            $user->missionsAsClient()
+                ->whereIn('status', ['pending', 'accepted', 'in_delivery'])
+                ->count()
+            +
+            $user->missionsAsTransporteur()
+                ->whereIn('status', ['pending', 'accepted', 'in_delivery'])
+                ->count();
+
+        if ($activeMissions > 0) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'Impossible de supprimer cet utilisateur : il a des missions en cours.');
         }
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé avec succès.');
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'Utilisateur supprimé avec succès.');
     }
 
     /**
@@ -128,7 +147,12 @@ class AdminController extends Controller
      */
     public function showTransportRequest(TransportRequest $transportRequest)
     {
-        $transportRequest->load(['client', 'offers.transporteur', 'offers.vehicle', 'mission.transporteur']);
+        $transportRequest->load([
+            'client',
+            'offers.transporteur',
+            'offers.vehicle',
+            'mission.transporteur'
+        ]);
 
         return view('admin.transport-requests.show', compact('transportRequest'));
     }
@@ -139,13 +163,21 @@ class AdminController extends Controller
     public function destroyTransportRequest(TransportRequest $transportRequest)
     {
         // Empecher suppression si mission active
-        if ($transportRequest->mission && !in_array($transportRequest->mission->status, ['delivered', 'cancelled'])) {
-            return back()->with('error', 'Impossible de supprimer une demande avec une mission active.');
+        if (
+            $transportRequest->mission &&
+            !in_array($transportRequest->mission->status, ['delivered', 'cancelled'])
+        ) {
+            return back()->with(
+                'error',
+                'Impossible de supprimer une demande avec une mission active.'
+            );
         }
 
         $transportRequest->delete();
 
-        return redirect()->route('admin.transport-requests.index')->with('success', 'Demande supprimée avec succès.');
+        return redirect()
+            ->route('admin.transport-requests.index')
+            ->with('success', 'Demande supprimée avec succès.');
     }
 
     /**
@@ -153,9 +185,13 @@ class AdminController extends Controller
      */
     public function offers()
     {
-        $offers = Offer::with(['transportRequest.client', 'transporteur', 'vehicle'])
-            ->latest()
-            ->paginate(20);
+        $offers = Offer::with([
+            'transportRequest.client',
+            'transporteur',
+            'vehicle'
+        ])
+        ->latest()
+        ->paginate(20);
 
         return view('admin.offers.index', compact('offers'));
     }
@@ -165,9 +201,15 @@ class AdminController extends Controller
      */
     public function missions()
     {
-        $missions = Mission::with(['client', 'transporteur', 'transportRequest', 'vehicle', 'offer'])
-            ->latest()
-            ->paginate(20);
+        $missions = Mission::with([
+            'client',
+            'transporteur',
+            'transportRequest',
+            'vehicle',
+            'offer'
+        ])
+        ->latest()
+        ->paginate(20);
 
         return view('admin.missions.index', compact('missions'));
     }
@@ -189,58 +231,27 @@ class AdminController extends Controller
      */
     public function reviews()
     {
-        $reviews = Review::with(['client', 'transporteur', 'mission.transportRequest'])
-            ->latest()
-            ->paginate(20);
+        $reviews = Review::with([
+            'client',
+            'transporteur',
+            'mission.transportRequest'
+        ])
+        ->latest()
+        ->paginate(20);
 
         return view('admin.reviews.index', compact('reviews'));
     }
 
     /**
-<<<<<<< HEAD
-     * Administrateur — supprimer un utilisateur.
-     */
-    public function destroyUser(User $user)
-    {
-        if ($user->id === auth()->id()) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with('error', 'Vous ne pouvez pas supprimer votre propre compte administrateur.');
-        }
-
-        $activeMissions =
-            $user->missionsAsClient()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count()
-            + $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count();
-
-        if ($activeMissions > 0) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with('error', 'Impossible de supprimer cet utilisateur : il a des missions en cours.');
-        }
-
-        $user->delete();
-
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'Utilisateur supprimé avec succès.');
-    }
-
-    /**
      * Administrateur — supprimer une évaluation.
-=======
-     * Supprimer une evaluation (admin).
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
      */
     public function destroyReview(Review $review)
     {
         $review->delete();
 
-<<<<<<< HEAD
         return redirect()
             ->route('admin.reviews.index')
             ->with('success', 'Évaluation supprimée avec succès.');
-=======
-        return redirect()->route('admin.reviews.index')->with('success', 'Avis supprimé avec succès.');
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
     }
 }
+
