@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\MissionDeliveredNotification;
 use App\Models\Mission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class MissionController extends Controller
      */
     public function clientShow(Mission $mission)
     {
-        abort_unless($mission->client_id === Auth::id(), 403);
+        $this->authorize('view', $mission);
 
         $mission->load(['transportRequest', 'transporteur', 'vehicle', 'offer', 'review']);
 
@@ -51,7 +52,7 @@ class MissionController extends Controller
      */
     public function transporteurShow(Mission $mission)
     {
-        abort_unless($mission->transporteur_id === Auth::id(), 403);
+        $this->authorize('view', $mission);
 
         $mission->load(['transportRequest', 'client', 'vehicle', 'offer']);
 
@@ -63,13 +64,12 @@ class MissionController extends Controller
      */
     public function updateStatus(Request $request, Mission $mission)
     {
-        abort_unless($mission->transporteur_id === Auth::id(), 403);
+        $this->authorize('updateStatus', $mission);
 
         $validated = $request->validate([
             'status' => 'required|in:accepted,in_delivery,delivered,cancelled',
         ]);
 
-        // Règles de transition de statut
         $allowedTransitions = [
             'pending'     => ['accepted', 'cancelled'],
             'accepted'    => ['in_delivery', 'cancelled'],
@@ -85,15 +85,12 @@ class MissionController extends Controller
 
         $data = ['status' => $validated['status']];
 
-        // Si livrée, enregistrer la date de livraison
         if ($validated['status'] === 'delivered') {
             $data['delivered_at'] = now();
-
-            // Remettre le véhicule disponible
             $mission->vehicle()->update(['available' => true]);
+            $mission->client->notify(new MissionDeliveredNotification($mission));
         }
 
-        // Si annulée, remettre le véhicule disponible
         if ($validated['status'] === 'cancelled') {
             $mission->vehicle()->update(['available' => true]);
         }

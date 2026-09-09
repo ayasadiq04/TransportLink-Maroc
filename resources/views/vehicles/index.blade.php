@@ -5,7 +5,7 @@
                 <h1 class="text-2xl font-bold text-gray-900">Ma flotte de véhicules</h1>
                 <p class="text-sm text-gray-500 mt-1">Gérez vos camions, fourgons et véhicules de transport</p>
             </div>
-            <a href="{{ route('vehicles.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-sm transition">
+            <a href="{{ route('transporteur.vehicles.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-sm transition">
                 + Ajouter un véhicule
             </a>
         </div>
@@ -22,7 +22,7 @@
                     <h3 class="mt-2 text-sm font-semibold text-gray-900">Aucun véhicule enregistré</h3>
                     <p class="mt-1 text-sm text-gray-500">Ajoutez votre premier véhicule pour pouvoir postuler aux demandes de transport.</p>
                     <div class="mt-6">
-                        <a href="{{ route('vehicles.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition">
+                        <a href="{{ route('transporteur.vehicles.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition">
                             Ajouter un véhicule
                         </a>
                     </div>
@@ -56,11 +56,11 @@
                             </div>
 
                             <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <a href="{{ route('vehicles.edit', $vehicle) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900">
+                                <a href="{{ route('transporteur.vehicles.edit', $vehicle) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900">
                                     Modifier
                                 </a>
 
-                                <form action="{{ route('vehicles.destroy', $vehicle) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de ce véhicule ?');" class="inline">
+                                <form action="{{ route('transporteur.vehicles.destroy', $vehicle) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de ce véhicule ?');" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-xs font-semibold text-rose-600 hover:text-rose-900">

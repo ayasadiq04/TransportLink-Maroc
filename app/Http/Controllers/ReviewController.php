@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReviewRequest;
 use App\Models\Mission;
 use App\Models\Review;
+use App\Models\User;
+use App\Notifications\NewReviewNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,21 +17,19 @@ class ReviewController extends Controller
      */
     public function create(Mission $mission)
     {
-        abort_unless($mission->client_id === Auth::id(), 403);
-
-        // Seule une mission livrée peut être évaluée
         if ($mission->status !== 'delivered') {
             return redirect()
                 ->route('client.missions.show', $mission)
                 ->with('error', 'Vous ne pouvez évaluer que les missions livrées.');
         }
 
-        // Vérifier qu'il n'y a pas déjà une évaluation
         if ($mission->review) {
             return redirect()
                 ->route('client.missions.show', $mission)
                 ->with('error', 'Vous avez déjà évalué cette mission.');
         }
+
+        $this->authorize('review', $mission);
 
         $mission->load(['transporteur', 'transportRequest']);
 
@@ -38,35 +39,21 @@ class ReviewController extends Controller
     /**
      * Client — enregistrer l'évaluation.
      */
-    public function store(Request $request, Mission $mission)
+    public function store(StoreReviewRequest $request, Mission $mission)
     {
-        abort_unless($mission->client_id === Auth::id(), 403);
+        $validated = $request->validated();
 
-        if ($mission->status !== 'delivered') {
-            return redirect()
-                ->route('client.missions.show', $mission)
-                ->with('error', 'Vous ne pouvez évaluer que les missions livrées.');
-        }
+        $transporteur = $mission->transporteur;
 
-        // Empêcher les doublons
-        if ($mission->review) {
-            return redirect()
-                ->route('client.missions.show', $mission)
-                ->with('error', 'Vous avez déjà évalué cette mission.');
-        }
-
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
-        ]);
-
-        Review::create([
+        $review = Review::create([
             'mission_id'      => $mission->id,
             'client_id'       => Auth::id(),
             'transporteur_id' => $mission->transporteur_id,
             'rating'          => $validated['rating'],
             'comment'         => $validated['comment'] ?? null,
         ]);
+
+        $transporteur?->notify(new NewReviewNotification($review));
 
         return redirect()
             ->route('client.missions.show', $mission)
@@ -78,7 +65,7 @@ class ReviewController extends Controller
      */
     public function transporteurProfile(int $id)
     {
-        $transporteur = \App\Models\User::where('id', $id)
+        $transporteur = User::where('id', $id)
             ->where('role', 'transporteur')
             ->firstOrFail();
 

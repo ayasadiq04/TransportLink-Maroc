@@ -76,6 +76,14 @@
                            class="px-3 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.missions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                             Missions
                         </a>
+                        <a href="{{ route('admin.offers.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.offers.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                            Offres
+                        </a>
+                        <a href="{{ route('admin.reviews.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.reviews.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                            Avis
+                        </a>
                     @endif
 
                 </div>
@@ -163,6 +171,8 @@
                 <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Utilisateurs</a>
                 <a href="{{ route('admin.transport-requests.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Demandes</a>
                 <a href="{{ route('admin.missions.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Missions</a>
+                <a href="{{ route('admin.offers.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Offres</a>
+                <a href="{{ route('admin.reviews.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Avis</a>
             @endif
         </div>
     </div>

@@ -10,7 +10,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="mb-6">
-                <a href="{{ route('transport-requests.create') }}"
+                <a href="{{ route('client.transport-requests.create') }}"
                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                     + Nouvelle demande
                 </a>
@@ -61,12 +61,12 @@
 
                                     <td class="px-6 py-4">
 
-                                        <a href="{{ route('transport-requests.edit', $request) }}"
+                                        <a href="{{ route('client.transport-requests.edit', $request) }}"
                                            class="text-blue-600 hover:text-blue-800 mr-3">
                                             Modifier
                                         </a>
 
-                                        <form action="{{ route('transport-requests.destroy', $request) }}"
+                                        <form action="{{ route('client.transport-requests.destroy', $request) }}"
                                               method="POST"
                                               class="inline">
 

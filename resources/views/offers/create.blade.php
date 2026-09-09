@@ -104,7 +104,7 @@
             <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
                 <form method="POST"
-                      action="{{ route('offers.store', $transportRequest) }}">
+                      action="{{ route('transporteur.offers.store', $transportRequest) }}">
 
                     @csrf
 
@@ -143,7 +143,7 @@
                         @if($vehicles->isEmpty())
                             <p class="mt-2 text-sm text-red-600">
                                 Aucun véhicule disponible.
-                                <a href="{{ route('vehicles.create') }}"
+                                <a href="{{ route('transporteur.vehicles.create') }}"
                                    class="font-semibold underline">
                                     Ajouter un véhicule
                                 </a>

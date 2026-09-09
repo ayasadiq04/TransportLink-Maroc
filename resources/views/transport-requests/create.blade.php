@@ -32,7 +32,7 @@
             </div>
         @endif
 
-        <form action="{{ route('transport-requests.store') }}" method="POST"
+        <form action="{{ route('client.transport-requests.store') }}" method="POST"
               class="bg-white p-6 rounded-lg shadow">
 
             @csrf

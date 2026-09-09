@@ -12,7 +12,7 @@
             <div class="bg-white p-6 shadow-sm rounded-lg">
 
                 <form method="POST"
-                      action="{{ route('transport-requests.update', $transportRequest) }}">
+                      action="{{ route('client.transport-requests.update', $transportRequest) }}">
 
                     @csrf
                     @method('PUT')

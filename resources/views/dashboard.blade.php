@@ -56,7 +56,7 @@
                         <h3 class="font-bold text-gray-900 text-base">🚛 Vos Véhicules</h3>
                         <p class="text-xs text-gray-500">Gérez votre parc et vos autorisations de transport.</p>
                         <div class="pt-2">
-                            <a href="{{ route('vehicles.index') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Voir mes véhicules &rarr;</a>
+                            <a href="{{ route('transporteur.vehicles.index') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Voir mes véhicules &rarr;</a>
                         </div>
                     </div>
                 @else

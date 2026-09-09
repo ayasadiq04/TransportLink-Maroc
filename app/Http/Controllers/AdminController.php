@@ -48,8 +48,9 @@ class AdminController extends Controller
         $clients       = User::where('role', 'client')->latest()->get();
         $transporteurs = User::where('role', 'transporteur')->latest()->get();
         $admins        = User::where('role', 'admin')->latest()->get();
+        $users         = User::latest()->get();
 
-        return view('admin.users.index', compact('clients', 'transporteurs', 'admins'));
+        return view('admin.users.index', compact('clients', 'transporteurs', 'admins', 'users'));
     }
 
     /**
@@ -108,5 +109,45 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('admin.reviews.index', compact('reviews'));
+    }
+
+    /**
+     * Administrateur — supprimer un utilisateur.
+     */
+    public function destroyUser(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'Vous ne pouvez pas supprimer votre propre compte administrateur.');
+        }
+
+        $activeMissions =
+            $user->missionsAsClient()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count()
+            + $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count();
+
+        if ($activeMissions > 0) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'Impossible de supprimer cet utilisateur : il a des missions en cours.');
+        }
+
+        $user->delete();
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'Utilisateur supprimé avec succès.');
+    }
+
+    /**
+     * Administrateur — supprimer une évaluation.
+     */
+    public function destroyReview(Review $review)
+    {
+        $review->delete();
+
+        return redirect()
+            ->route('admin.reviews.index')
+            ->with('success', 'Évaluation supprimée avec succès.');
     }
 }

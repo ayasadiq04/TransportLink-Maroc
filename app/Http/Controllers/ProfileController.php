@@ -48,6 +48,16 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        $activeStatuses = ['pending', 'accepted', 'in_delivery'];
+
+        $activeMissions =
+            $user->missionsAsClient()->whereIn('status', $activeStatuses)->count()
+            + $user->missionsAsTransporteur()->whereIn('status', $activeStatuses)->count();
+
+        if ($activeMissions > 0) {
+            return Redirect::route('profile.edit')->with('error', 'Impossible de supprimer votre compte : vous avez des missions en cours. Veuillez les terminer avant de supprimer votre compte.');
+        }
+
         Auth::logout();
 
         $user->delete();

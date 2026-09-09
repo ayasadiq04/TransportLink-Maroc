@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreVehicleRequest;
+use App\Http\Requests\UpdateVehicleRequest;
 use App\Models\Vehicle;
-use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Vehicle::class);
+
         $vehicles = Vehicle::where('transporteur_id', auth()->id())
             ->latest()
             ->get();
@@ -18,62 +21,51 @@ class VehicleController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Vehicle::class);
+
         return view('vehicles.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreVehicleRequest $request)
     {
-        $validated = $request->validate([
-            'type' => 'required|string|max:255',
-            'brand' => 'nullable|string|max:255',
-            'model' => 'nullable|string|max:255',
-            'registration_number' => 'required|string|max:255|unique:vehicles,registration_number',
-            'capacity' => 'required|numeric|min:0',
-        ]);
-
+        $validated = $request->validated();
         $validated['transporteur_id'] = auth()->id();
 
         Vehicle::create($validated);
 
         return redirect()
-            ->route('vehicles.index')
+            ->route('transporteur.vehicles.index')
             ->with('success', 'Véhicule ajouté avec succès.');
     }
 
     public function edit(Vehicle $vehicle)
     {
-        abort_unless($vehicle->transporteur_id === auth()->id(), 403);
+        $this->authorize('update', $vehicle);
 
         return view('vehicles.edit', compact('vehicle'));
     }
 
-    public function update(Request $request, Vehicle $vehicle)
+    public function update(UpdateVehicleRequest $request, Vehicle $vehicle)
     {
-        abort_unless($vehicle->transporteur_id === auth()->id(), 403);
-
-        $validated = $request->validate([
-            'type' => 'required|string|max:255',
-            'brand' => 'nullable|string|max:255',
-            'model' => 'nullable|string|max:255',
-            'registration_number' => 'required|string|max:255|unique:vehicles,registration_number,' . $vehicle->id,
-            'capacity' => 'required|numeric|min:0',
-        ]);
-
-        $vehicle->update($validated);
+        $vehicle->update($request->validated());
 
         return redirect()
-            ->route('vehicles.index')
+            ->route('transporteur.vehicles.index')
             ->with('success', 'Véhicule modifié avec succès.');
     }
 
     public function destroy(Vehicle $vehicle)
     {
-        abort_unless($vehicle->transporteur_id === auth()->id(), 403);
+        $this->authorize('delete', $vehicle);
+
+        if ($vehicle->missions()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->exists()) {
+            return back()->with('error', 'Impossible de supprimer un véhicule utilisé dans une mission active.');
+        }
 
         $vehicle->delete();
 
         return redirect()
-            ->route('vehicles.index')
+            ->route('transporteur.vehicles.index')
             ->with('success', 'Véhicule supprimé avec succès.');
     }
 }

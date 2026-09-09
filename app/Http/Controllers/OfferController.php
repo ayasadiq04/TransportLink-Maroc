@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOfferRequest;
 use App\Models\Mission;
 use App\Models\Offer;
 use App\Models\TransportRequest;
 use App\Models\Vehicle;
+use App\Notifications\NewOfferNotification;
+use App\Notifications\OfferAcceptedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +33,7 @@ class OfferController extends Controller
      */
     public function show(Offer $offer)
     {
-        abort_unless($offer->transporteur_id === Auth::id(), 403);
+        $this->authorize('view', $offer);
 
         $offer->load(['transportRequest', 'vehicle', 'mission']);
 
@@ -42,7 +45,6 @@ class OfferController extends Controller
      */
     public function create(TransportRequest $transportRequest)
     {
-        // La demande doit encore être disponible
         abort_if($transportRequest->status !== 'pending', 404);
 
         $vehicles = Vehicle::where('transporteur_id', Auth::id())
@@ -58,72 +60,22 @@ class OfferController extends Controller
     /**
      * Transporteur — enregistrer une nouvelle offre.
      */
-    public function store(
-        Request $request,
-        TransportRequest $transportRequest
-    ) {
-        if ($transportRequest->status !== 'pending') {
-            return back()->with(
-                'error',
-                'Cette demande n\'est plus disponible.'
-            );
-        }
+    public function store(StoreOfferRequest $request, TransportRequest $transportRequest)
+    {
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'vehicle_id' => [
-                'required',
-                'exists:vehicles,id',
-            ],
-            'amount' => [
-                'required',
-                'numeric',
-                'min:1',
-            ],
-            'message' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
-            'conditions' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
-            'estimated_delivery_time' => [
-                'nullable',
-                'string',
-                'max:255',
-            ],
-        ]);
-
-        // Vérifier que le véhicule appartient au transporteur connecté
-        $vehicle = Vehicle::where('id', $validated['vehicle_id'])
-            ->where('transporteur_id', Auth::id())
-            ->where('available', true)
-            ->firstOrFail();
-
-        // Vérifier si le transporteur a déjà proposé une offre
-        $alreadyExists = Offer::where('transport_request_id', $transportRequest->id)
-            ->where('transporteur_id', Auth::id())
-            ->exists();
-
-        if ($alreadyExists) {
-            return back()->with(
-                'error',
-                'Vous avez déjà proposé une offre pour cette demande.'
-            );
-        }
-
-        Offer::create([
-            'transport_request_id'  => $transportRequest->id,
-            'transporteur_id'       => Auth::id(),
-            'vehicle_id'            => $vehicle->id,
-            'amount'                => $validated['amount'],
-            'message'               => $validated['message'] ?? null,
-            'conditions'            => $validated['conditions'] ?? null,
+        $offer = Offer::create([
+            'transport_request_id'    => $transportRequest->id,
+            'transporteur_id'         => Auth::id(),
+            'vehicle_id'              => $validated['vehicle_id'],
+            'amount'                  => $validated['amount'],
+            'message'                 => $validated['message'] ?? null,
+            'conditions'              => $validated['conditions'] ?? null,
             'estimated_delivery_time' => $validated['estimated_delivery_time'] ?? null,
-            'status'                => 'pending',
+            'status'                  => 'pending',
         ]);
+
+        $transportRequest->client->notify(new NewOfferNotification($offer));
 
         return redirect()
             ->route('transporteur.requests.index')
@@ -135,7 +87,6 @@ class OfferController extends Controller
      */
     public function clientOffers()
     {
-        // Récupérer toutes les offres sur les demandes du client connecté
         $offers = Offer::whereHas('transportRequest', function ($query) {
                 $query->where('client_id', Auth::id());
             })
@@ -148,41 +99,24 @@ class OfferController extends Controller
 
     /**
      * Client — accepter une offre.
-     * Crée automatiquement une mission.
      */
     public function accept(Offer $offer)
     {
+        $this->authorize('accept', $offer);
+
         $transportRequest = $offer->transportRequest;
 
-        // Vérifier que c'est le client de cette demande
-        abort_unless($transportRequest->client_id === Auth::id(), 403);
-
-        // Vérifier que la demande est encore en attente
-        if ($transportRequest->status !== 'pending') {
-            return back()->with('error', 'Cette demande n\'est plus en attente.');
-        }
-
-        // Vérifier que l'offre est encore en attente
-        if ($offer->status !== 'pending') {
-            return back()->with('error', 'Cette offre n\'est plus disponible.');
-        }
-
-        // Transaction pour garantir la cohérence
         DB::transaction(function () use ($offer, $transportRequest) {
-            // 1. Accepter l'offre sélectionnée
             $offer->update(['status' => 'accepted']);
 
-            // 2. Rejeter toutes les autres offres en attente
             Offer::where('transport_request_id', $transportRequest->id)
                 ->where('id', '!=', $offer->id)
                 ->where('status', 'pending')
                 ->update(['status' => 'rejected']);
 
-            // 3. Mettre à jour le statut de la demande
             $transportRequest->update(['status' => 'accepted']);
 
-            // 4. Créer la mission automatiquement
-            Mission::create([
+            $mission = Mission::create([
                 'transport_request_id' => $transportRequest->id,
                 'offer_id'             => $offer->id,
                 'client_id'            => $transportRequest->client_id,
@@ -192,8 +126,9 @@ class OfferController extends Controller
                 'planned_at'           => $transportRequest->pickup_at,
             ]);
 
-            // 5. Rendre le véhicule indisponible
             $offer->vehicle()->update(['available' => false]);
+
+            $offer->transporteur->notify(new OfferAcceptedNotification($offer));
         });
 
         return redirect()
@@ -206,13 +141,7 @@ class OfferController extends Controller
      */
     public function reject(Offer $offer)
     {
-        $transportRequest = $offer->transportRequest;
-
-        abort_unless($transportRequest->client_id === Auth::id(), 403);
-
-        if ($offer->status !== 'pending') {
-            return back()->with('error', 'Cette offre ne peut plus être rejetée.');
-        }
+        $this->authorize('reject', $offer);
 
         $offer->update(['status' => 'rejected']);
 

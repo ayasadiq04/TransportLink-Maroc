@@ -317,6 +317,9 @@
             box-shadow: 0 4px 14px rgba(79,70,229,.35);
         }
         .form-submit:hover { box-shadow: 0 8px 24px rgba(79,70,229,.45); transform: translateY(-1px); }
+        .form-success { background: #ecfdf5; color: #047857; font-size: 0.82rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; border: 1px solid #a7f3d0; margin-bottom: 14px; }
+        .form-errors { list-style: none; margin: 0 0 14px; padding: 10px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; }
+        .form-errors li { color: #b91c1c; font-size: 0.8rem; }
 
         /* ── FOOTER ── */
         footer {
@@ -615,25 +618,36 @@
                     <h3>Envoyez-nous un message</h3>
                     <p class="sub">Nous vous répondrons dans les plus brefs délais.</p>
 
-                    <form action="#" method="POST" onsubmit="handleContact(event)">
+                    <form action="{{ route('contact.send') }}" method="POST">
+                        @csrf
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="contact-name">Nom complet</label>
-                                <input type="text" id="contact-name" name="name" class="form-input" placeholder="Votre nom" required>
+                                <input type="text" id="contact-name" name="name" class="form-input" placeholder="Votre nom" value="{{ old('name') }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="contact-email">Email</label>
-                                <input type="email" id="contact-email" name="email" class="form-input" placeholder="votre@email.com" required>
+                                <input type="email" id="contact-email" name="email" class="form-input" placeholder="votre@email.com" value="{{ old('email') }}" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="contact-subject">Sujet</label>
-                            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Ex : Question sur une expédition" required>
+                            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Ex : Question sur une expédition" value="{{ old('subject') }}" required>
                         </div>
                         <div class="form-group">
                             <label for="contact-message">Message</label>
-                            <textarea id="contact-message" name="message" class="form-input" placeholder="Décrivez votre demande en détail..." required></textarea>
+                            <textarea id="contact-message" name="message" class="form-input" placeholder="Décrivez votre demande en détail..." required>{{ old('message') }}</textarea>
                         </div>
+                        @if ($errors->any())
+                            <ul class="form-errors">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        @if (session('success'))
+                            <p class="form-success">{{ session('success') }}</p>
+                        @endif
                         <button type="submit" class="form-submit" id="contact-submit-btn">
                             Envoyer le message ✈️
                         </button>
@@ -671,19 +685,14 @@
             });
         });
 
-        // Contact form handler (demo — no backend submission yet)
-        function handleContact(e) {
-            e.preventDefault();
-            const btn = document.getElementById('contact-submit-btn');
-            btn.textContent = '✅ Message envoyé !';
-            btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.textContent = 'Envoyer le message ✈️';
-                btn.style.background = '';
-                btn.disabled = false;
-                e.target.reset();
-            }, 3000);
+        // Bouton de contact : retour visuel rapide
+        const btn = document.getElementById('contact-submit-btn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                btn.textContent = '✅ Message envoyé !';
+                btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                btn.disabled = true;
+            });
         }
     </script>
 
