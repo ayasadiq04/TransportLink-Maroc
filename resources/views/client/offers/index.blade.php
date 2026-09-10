@@ -39,9 +39,7 @@
                                             {{ strtoupper(substr($offer->transporteur->name ?? 'T', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <a href="{{ route('transporteur.profile', $offer->transporteur_id) }}" class="font-semibold text-gray-900 hover:text-emerald-600 transition text-sm">
-                                                {{ $offer->transporteur->name }}
-                                            </a>
+                                            <span class="font-semibold text-gray-900 text-sm">{{ $offer->transporteur->name }}</span>
                                             <p class="text-xs text-gray-500">{{ $offer->created_at->diffForHumans() }}</p>
                                         </div>
                                     </div>

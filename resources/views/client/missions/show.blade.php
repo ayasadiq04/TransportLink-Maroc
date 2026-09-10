@@ -133,37 +133,6 @@
                     </div>
                 </div>
 
-                <!-- Évaluation -->
-                @if($mission->status === 'delivered')
-                    <div class="sm:col-span-2">
-                        @if($mission->review)
-                            <div class="bg-emerald-50 rounded-2xl border border-emerald-200 p-6">
-                                <h2 class="font-semibold text-emerald-900 mb-3">Votre évaluation</h2>
-                                <div class="flex items-center gap-1 mb-2">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <svg class="w-5 h-5 {{ $i <= $mission->review->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                        </svg>
-                                    @endfor
-                                    <span class="text-sm font-medium text-gray-700 ml-1">{{ $mission->review->rating }}/5</span>
-                                </div>
-                                @if($mission->review->comment)
-                                    <p class="text-sm text-gray-700">{{ $mission->review->comment }}</p>
-                                @endif
-                            </div>
-                        @else
-                            <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6">
-                                <h2 class="font-semibold text-amber-900 mb-2">Évaluez votre transporteur</h2>
-                                <p class="text-sm text-amber-700 mb-4">La mission est terminée. Partagez votre expérience pour aider la communauté.</p>
-                                <a href="{{ route('client.reviews.create', $mission) }}"
-                                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-xl hover:bg-amber-600 transition-colors">
-                                    ⭐ Laisser un avis
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
             </div>
         </div>
     </div>

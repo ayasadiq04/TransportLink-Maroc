@@ -57,25 +57,6 @@ class User extends Authenticatable
         return $this->hasMany(Mission::class, 'transporteur_id');
     }
 
-    public function reviewsGiven(): HasMany
-    {
-        return $this->hasMany(Review::class, 'client_id');
-    }
-
-    public function reviewsReceived(): HasMany
-    {
-        return $this->hasMany(Review::class, 'transporteur_id');
-    }
-
-    /**
-     * Retourne la note moyenne du transporteur (1-5).
-     */
-    public function averageRating(): float
-    {
-        $avg = $this->reviewsReceived()->avg('rating');
-        return round($avg ?? 0, 1);
-    }
-
     /**
      * Get the attributes that should be cast.
      *

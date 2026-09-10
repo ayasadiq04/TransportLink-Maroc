@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Mission;
 use App\Models\Offer;
-use App\Models\Review;
 use App\Models\TransportRequest;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -15,7 +14,7 @@ class WorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_full_workflow_request_to_review(): void
+    public function test_full_workflow_request_to_delivery(): void
     {
         $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
         $transporteur = User::factory()->create(['role' => 'transporteur', 'email_verified_at' => now()]);
@@ -85,19 +84,6 @@ class WorkflowTest extends TestCase
         $this->assertEquals('delivered', $mission->fresh()->status);
         $this->assertTrue($vehicle->fresh()->available);
         $this->assertNotNull($mission->fresh()->delivered_at);
-
-        $this->actingAs($client);
-
-        $this->post("/client/missions/{$mission->id}/review", [
-            'rating'  => 5,
-            'comment' => 'Excellent travail, très professionnel.',
-        ])->assertSessionHas('success');
-
-        $this->assertDatabaseCount('reviews', 1);
-        $review = Review::first();
-        $this->assertEquals(5, $review->rating);
-        $this->assertEquals($transporteur->id, $review->transporteur_id);
-        $this->assertEquals(5, $transporteur->averageRating());
     }
 
     public function test_accepting_offer_rejects_other_pending_offers(): void

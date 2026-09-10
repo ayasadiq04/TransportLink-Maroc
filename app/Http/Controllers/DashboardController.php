@@ -47,8 +47,6 @@ class DashboardController extends Controller
             'missions'            => $user->missionsAsTransporteur()->count(),
             'active_missions'     => $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
             'delivered_missions'  => $user->missionsAsTransporteur()->where('status', 'delivered')->count(),
-            'average_rating'      => $user->averageRating(),
-            'total_reviews'       => $user->reviewsReceived()->count(),
         ];
 
         $recentMissions = $user->missionsAsTransporteur()->with('client')->latest()->limit(3)->get();

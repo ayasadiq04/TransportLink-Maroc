@@ -16,7 +16,7 @@ class MissionController extends Controller
     public function clientIndex()
     {
         $missions = Mission::where('client_id', Auth::id())
-            ->with(['transportRequest', 'transporteur', 'vehicle', 'review'])
+            ->with(['transportRequest', 'transporteur', 'vehicle'])
             ->latest()
             ->get();
 
@@ -30,7 +30,7 @@ class MissionController extends Controller
     {
         $this->authorize('view', $mission);
 
-        $mission->load(['transportRequest', 'transporteur', 'vehicle', 'offer', 'review']);
+        $mission->load(['transportRequest', 'transporteur', 'vehicle', 'offer']);
 
         return view('client.missions.show', compact('mission'));
     }

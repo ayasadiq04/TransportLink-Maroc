@@ -20,12 +20,4 @@ class MissionPolicy
     {
         return $user->role === 'transporteur' && $mission->transporteur_id === $user->id;
     }
-
-    public function review(User $user, Mission $mission): bool
-    {
-        return $user->role === 'client'
-            && $mission->client_id === $user->id
-            && $mission->status === 'delivered'
-            && !$mission->review;
-    }
 }

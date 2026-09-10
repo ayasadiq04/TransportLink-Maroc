@@ -35,9 +35,6 @@
                                 </div>
                                 <div class="flex flex-col items-end gap-2 flex-shrink-0">
                                     <x-status-badge :status="$mission->status" type="mission"/>
-                                    @if($mission->status === 'delivered' && !$mission->review)
-                                        <span class="text-xs text-amber-600 font-medium">⭐ À évaluer</span>
-                                    @endif
                                     @if($mission->planned_at)
                                         <p class="text-xs text-gray-400">{{ $mission->planned_at->format('d/m/Y') }}</p>
                                     @endif

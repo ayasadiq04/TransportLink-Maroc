@@ -64,21 +64,6 @@
                     </div>
                     <p class="text-xs text-purple-600 mt-2 font-medium">{{ $stats['active_missions'] }} en cours</p>
                 </div>
-
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500">Note moyenne</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['average_rating'], 1) }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">{{ $stats['total_reviews'] }} avis</p>
-                </div>
             </div>
 
             <!-- Alerte demandes disponibles -->

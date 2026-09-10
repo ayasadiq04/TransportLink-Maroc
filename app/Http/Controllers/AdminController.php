@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Mission;
 use App\Models\Offer;
-use App\Models\Review;
 use App\Models\TransportRequest;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -25,7 +24,6 @@ class AdminController extends Controller
             'offers'             => Offer::count(),
             'missions'           => Mission::count(),
             'missions_delivered' => Mission::where('status', 'delivered')->count(),
-            'reviews'            => Review::count(),
         ];
 
         $recentRequests = TransportRequest::with('client')
@@ -70,7 +68,6 @@ class AdminController extends Controller
             'offers',
             'missionsAsClient',
             'missionsAsTransporteur',
-            'reviewsReceived'
         ]);
 
         return view('admin.users.show', compact('user'));
@@ -223,34 +220,6 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('admin.vehicles.index', compact('vehicles'));
-    }
-
-    /**
-     * Liste de toutes les evaluations.
-     */
-    public function reviews()
-    {
-        $reviews = Review::with([
-            'client',
-            'transporteur',
-            'mission.transportRequest'
-        ])
-        ->latest()
-        ->paginate(20);
-
-        return view('admin.reviews.index', compact('reviews'));
-    }
-
-    /**
-     * Administrateur — supprimer une évaluation.
-     */
-    public function destroyReview(Review $review)
-    {
-        $review->delete();
-
-        return redirect()
-            ->route('admin.reviews.index')
-            ->with('success', 'Évaluation supprimée avec succès.');
     }
 }
 

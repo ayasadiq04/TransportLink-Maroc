@@ -57,35 +57,6 @@ class ViewRenderTest extends TestCase
         $this->get('/admin/transport-requests')->assertOk();
         $this->get('/admin/offers')->assertOk();
         $this->get('/admin/missions')->assertOk();
-        $this->get('/admin/reviews')->assertOk();
-    }
-
-    public function test_admin_can_delete_review(): void
-    {
-        $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now()]);
-        $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
-        $transporteur = User::factory()->create(['role' => 'transporteur', 'email_verified_at' => now()]);
-
-        $transportRequest = TransportRequest::factory()->create(['client_id' => $client->id]);
-        $offer = Offer::factory()->create(['transporteur_id' => $transporteur->id]);
-        $mission = \App\Models\Mission::factory()->create([
-            'transport_request_id' => $transportRequest->id,
-            'offer_id'             => $offer->id,
-            'client_id'            => $client->id,
-            'transporteur_id'      => $transporteur->id,
-            'status'               => 'delivered',
-        ]);
-        $review = \App\Models\Review::factory()->create([
-            'mission_id'      => $mission->id,
-            'client_id'       => $client->id,
-            'transporteur_id' => $transporteur->id,
-        ]);
-
-        $this->actingAs($admin)
-            ->delete("/admin/reviews/{$review->id}")
-            ->assertSessionHas('success');
-
-        $this->assertDatabaseCount('reviews', 0);
     }
 
     public function test_admin_cannot_delete_user_with_active_mission(): void

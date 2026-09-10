@@ -1,6 +1,6 @@
  # TransportLink Maroc
 
-Plateforme de mise en relation entre **expéditeurs** et **transporteurs** au Maroc : les clients publient leurs demandes de transport, les transporteurs consultent les demandes disponibles et soumettent leurs offres, puis les deux parties suivent la mission jusqu'à la livraison et l'évaluation.
+Plateforme de mise en relation entre **expéditeurs** et **transporteurs** au Maroc : les clients publient leurs demandes de transport, les transporteurs consultent les demandes disponibles et soumettent leurs offres, puis les deux parties suivent la mission jusqu'à la livraison.
 
 ## Problème résolu
 
@@ -8,7 +8,7 @@ En l'absence de place de marché structurée, trouver un transporteur (ou une ca
 
 - les clients trouvent rapidement un transporteur pour une marchandise donnée ;
 - les transporteurs remplissent leur flotte en trouvant des trajets rentables ;
-- chaque mission dispose d'un suivi d'états clair et d'un système d'avis post-livraison.
+- chaque mission dispose d'un suivi d'états clair de la demande jusqu'à la livraison.
 
 ## Fonctionnalités principales
 
@@ -17,8 +17,7 @@ En l'absence de place de marché structurée, trouver un transporteur (ou une ca
 - **Offres** : le transporteur propose un prix, un véhicule et des conditions ; le client accepte ou rejette (l'acceptation génère automatiquement la mission et refuse les autres offres).
 - **Missions** : suivi des états `in_delivery` → `delivered`, complétion automatique de la demande.
 - **Véhicules** : gestion du parc transporteur (type, marque, modèle, capacité, disponibilité).
-- **Avis** : après une mission livrée, le client peut évaluer le transporteur (note + commentaire) ; les avis sont consultables et gérables côté admin.
-- **Administration** : tableau de bord, gestion des utilisateurs, demandes, offres, missions, véhicules et avis.
+- **Administration** : tableau de bord, gestion des utilisateurs, demandes, offres, missions et véhicules.
 - **Espace personnel** : profil éditable, mot de passe, suppression de compte.
 - **API REST** : authentification Laravel Sanctum pour les données exposées.
 - **Sécurité** : middleware de rôle, policies d'autorisation, en-tête Content-Security-Policy global.
@@ -27,8 +26,8 @@ En l'absence de place de marché structurée, trouver un transporteur (ou une ca
 
 | Rôle | Accès |
 | --- | --- |
-| **Admin** | Tableau de bord global, gestion des utilisateurs, demandes, offres, missions, véhicules et avis. |
-| **Client** | Gère ses demandes de transport, reçoit les offres, accepte/rejette, suit ses missions et laisse un avis après livraison. |
+| **Admin** | Tableau de bord global, gestion des utilisateurs, demandes, offres, missions et véhicules. |
+| **Client** | Gère ses demandes de transport, reçoit les offres, accepte/rejette, suit ses missions. |
 | **Transporteur** | Gère ses véhicules, consulte les demandes disponibles, soumet des offres et met à jour le statut de ses missions. |
 
 ## Stack technique
@@ -52,7 +51,7 @@ Application **MVC serveur-rendue** (Blade) complétée d'une **API REST** :
 - vues organisées par rôle : `client/`, `transporteur/`, `admin/`, `auth/`, `profile/` ;
 - validation des entrées dans `app/Http/Requests` ;
 - middleware global **Content-Security-Policy** ;
-- modèle de données : `users`, `vehicles`, `transport_requests`, `offers`, `missions`, `reviews`.
+- modèle de données : `users`, `vehicles`, `transport_requests`, `offers`, `missions`.
 
 ## Installation avec Docker
 
@@ -139,7 +138,7 @@ app/
 │   ├── Controllers/      # Contrôleurs web et API (dossier Api/)
 │   ├── Middleware/       # RoleMiddleware, ContentSecurityPolicy
 │   └── Requests/         # Validation des formulaires
-├── Models/               # User, TransportRequest, Offer, Mission, Vehicle, Review
+├── Models/               # User, TransportRequest, Offer, Mission, Vehicle
 └── Policies/             # Autorisations par entité
 
 database/
@@ -179,7 +178,7 @@ $token = $user->createToken('api')->plainTextToken;
 
 ## Tests
 
-La suite de tests (`tests/Feature/`) couvre : authentification et vérification d'email, rôles et accès, workflows complets (demande → offre → mission → avis), création manuelle d'avis après livraison, protections de suppression, rendu des pages, API et en-tête CSP (aucun script inline).
+La suite de tests (`tests/Feature/`) couvre : authentification et vérification d'email, rôles et accès, workflows complets (demande → offre → mission → livraison), protections de suppression, rendu des pages, API et en-tête CSP (aucun script inline).
 
 ```sh
 docker compose exec app php artisan test

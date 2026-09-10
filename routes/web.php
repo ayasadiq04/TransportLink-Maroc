@@ -6,7 +6,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TransportRequestController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -62,10 +61,6 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     // Missions
     Route::get('/missions', [MissionController::class, 'clientIndex'])->name('missions.index');
     Route::get('/missions/{mission}', [MissionController::class, 'clientShow'])->name('missions.show');
-
-    // Evaluations
-    Route::get('/missions/{mission}/review', [ReviewController::class, 'create'])->name('reviews.create');
-    Route::post('/missions/{mission}/review', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 // ─── TRANSPORTEUR ─────────────────────────────────────────────────────────────
@@ -116,14 +111,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Vehicules
     Route::get('/vehicles', [AdminController::class, 'vehicles'])->name('vehicles.index');
-
-    // Reviews
-    Route::get('/reviews', [AdminController::class, 'reviews'])->name('reviews.index');
-Route::delete('/reviews/{review}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
 });
-
-// ─── Profil public transporteur (accessible a tous les authentifies) ──────────
-Route::middleware('auth')->get('/transporteurs/{id}/profile', [ReviewController::class, 'transporteurProfile'])
-    ->name('transporteur.profile');
 
 require __DIR__.'/auth.php';

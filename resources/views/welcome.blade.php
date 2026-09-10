@@ -403,10 +403,6 @@
         <div class="hero-inner">
             <!-- Left -->
             <div>
-                <div class="hero-badge">
-                    <span></span>
-                    Réseau actif dans +30 villes du Maroc 🇲🇦
-                </div>
                 <h1>Expédiez vos marchandises en toute <em>simplicité & sécurité</em>.</h1>
                 <p>TransportLink Maroc met en relation expéditeurs et transporteurs vérifiés. Publiez votre annonce, comparez les devis et suivez votre trajet en temps réel.</p>
 
@@ -560,7 +556,7 @@
                 <div class="trans-card">
                     <div class="trans-icon icon-purple">📊</div>
                     <h3>Dashboard professionnel</h3>
-                    <p>Gérez votre flotte, vos offres et vos trajets depuis un espace dédié. Suivez vos performances et vos avis en temps réel.</p>
+                    <p>Gérez votre flotte, vos offres et vos trajets depuis un espace dédié. Suivez vos performances en temps réel.</p>
                 </div>
             </div>
 
