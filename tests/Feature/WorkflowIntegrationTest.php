@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class WorkflowIntegrationTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test 1: Voir la demande button & authorization.
      * Transporteur can view pending request, or request where he has offer/mission.

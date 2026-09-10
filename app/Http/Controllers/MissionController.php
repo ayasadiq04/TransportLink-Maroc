@@ -96,16 +96,6 @@ class MissionController extends Controller
 
         $data = ['status' => $targetStatus];
 
-<<<<<<< HEAD
-        if ($validated['status'] === 'delivered') {
-            $data['delivered_at'] = now();
-            $mission->vehicle()->update(['available' => true]);
-            $mission->client->notify(new MissionDeliveredNotification($mission));
-        }
-
-        if ($validated['status'] === 'cancelled') {
-            $mission->vehicle()->update(['available' => true]);
-=======
         // Si livrée, enregistrer la date de livraison, synchroniser la demande et libérer le véhicule
         if ($targetStatus === 'delivered') {
             $data['delivered_at'] = now();
@@ -117,6 +107,9 @@ class MissionController extends Controller
             if ($mission->vehicle_id) {
                 $mission->vehicle()->update(['available' => true]);
             }
+
+            // Notifier le client de la livraison
+            $mission->client->notify(new MissionDeliveredNotification($mission));
         }
 
         // Si annulée, remettre le véhicule disponible et la demande en 'cancelled'
@@ -126,7 +119,6 @@ class MissionController extends Controller
             if ($mission->vehicle_id) {
                 $mission->vehicle()->update(['available' => true]);
             }
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
         }
 
         $mission->update($data);

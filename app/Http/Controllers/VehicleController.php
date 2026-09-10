@@ -21,35 +21,15 @@ class VehicleController extends Controller
 
     public function create()
     {
-<<<<<<< HEAD
         $this->authorize('create', Vehicle::class);
 
-        return view('vehicles.create');
-=======
         return view('transporteur.vehicles.create');
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
     }
 
     public function store(StoreVehicleRequest $request)
     {
-<<<<<<< HEAD
         $validated = $request->validated();
-=======
-        $validated = $request->validate([
-            'type'                => 'required|string|max:255',
-            'brand'               => 'nullable|string|max:255',
-            'model'               => 'nullable|string|max:255',
-            'registration_number' => 'required|string|max:255|unique:vehicles,registration_number',
-            'capacity'            => 'required|numeric|min:0',
-        ], [
-            'type.required'                => 'Le type de véhicule est obligatoire.',
-            'registration_number.required' => 'La plaque d\'immatriculation est obligatoire.',
-            'registration_number.unique'   => 'Cette plaque d\'immatriculation est déjà enregistrée.',
-            'capacity.required'            => 'La capacité est obligatoire.',
-            'capacity.numeric'             => 'La capacité doit être un nombre.',
-        ]);
 
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
         $validated['transporteur_id'] = auth()->id();
         $validated['available']       = true;
 
@@ -69,30 +49,12 @@ class VehicleController extends Controller
 
     public function update(UpdateVehicleRequest $request, Vehicle $vehicle)
     {
-<<<<<<< HEAD
-        $vehicle->update($request->validated());
-=======
-        abort_unless($vehicle->transporteur_id === auth()->id(), 403);
-
-        $validated = $request->validate([
-            'type'                => 'required|string|max:255',
-            'brand'               => 'nullable|string|max:255',
-            'model'               => 'nullable|string|max:255',
-            'registration_number' => 'required|string|max:255|unique:vehicles,registration_number,' . $vehicle->id,
-            'capacity'            => 'required|numeric|min:0',
-            'available'           => 'boolean',
-        ], [
-            'type.required'                => 'Le type de véhicule est obligatoire.',
-            'registration_number.required' => 'La plaque d\'immatriculation est obligatoire.',
-            'registration_number.unique'   => 'Cette plaque d\'immatriculation est déjà enregistrée.',
-            'capacity.required'            => 'La capacité est obligatoire.',
-        ]);
+        $validated = $request->validated();
 
         // available est une checkbox, si absent = false
         $validated['available'] = $request->has('available');
 
         $vehicle->update($validated);
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
 
         return redirect()
             ->route('transporteur.vehicles.index')

@@ -122,11 +122,7 @@ Route::middleware(['auth', 'role:transporteur'])->prefix('transporteur')->name('
     // Missions
     Route::get('/missions', [MissionController::class, 'transporteurIndex'])->name('missions.index');
     Route::get('/missions/{mission}', [MissionController::class, 'transporteurShow'])->name('missions.show');
-<<<<<<< HEAD
-    Route::post('/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
-=======
-    Route::match(['post', 'patch'], '/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
+Route::match(['post', 'patch'], '/missions/{mission}/status', [MissionController::class, 'updateStatus'])->name('missions.update-status');
 });
 
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
@@ -135,15 +131,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Utilisateurs
     Route::get('/users', [AdminController::class, 'users'])->name('users.index');
-<<<<<<< HEAD
-    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.delete');
-=======
     Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('users.show');
     Route::patch('/users/{user}/toggle', [AdminController::class, 'toggleUser'])->name('users.toggle');
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
 
     // Demandes
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
     Route::get('/transport-requests', [AdminController::class, 'transportRequests'])->name('transport-requests.index');
     Route::get('/transport-requests/{transportRequest}', [AdminController::class, 'showTransportRequest'])->name('transport-requests.show');
     Route::delete('/transport-requests/{transportRequest}', [AdminController::class, 'destroyTransportRequest'])->name('transport-requests.destroy');
@@ -159,11 +151,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Reviews
     Route::get('/reviews', [AdminController::class, 'reviews'])->name('reviews.index');
-<<<<<<< HEAD
-    Route::delete('/reviews/{review}', [AdminController::class, 'destroyReview'])->name('reviews.delete');
-=======
-    Route::delete('/reviews/{review}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
->>>>>>> 230d605c40ca0950958722dca40f541066fdc464
+Route::delete('/reviews/{review}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
 });
 
 // ─── Profil public transporteur (accessible a tous les authentifies) ──────────

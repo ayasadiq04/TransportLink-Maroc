@@ -22,8 +22,21 @@ class TransportRequestPolicy
             return true;
         }
 
-        if ($user->role === 'transporteur' && $transportRequest->status === 'pending') {
-            return true;
+        if ($user->role === 'transporteur') {
+            // Une demande en attente est visible par tous les transporteurs
+            if ($transportRequest->status === 'pending') {
+                return true;
+            }
+
+            // Un transporteur peut consulter une demande non-pending s'il y a
+            // déposé une offre ou s'il est assigné à la mission associée.
+            if ($transportRequest->offers()->where('transporteur_id', $user->id)->exists()) {
+                return true;
+            }
+
+            if ($transportRequest->mission()->where('transporteur_id', $user->id)->exists()) {
+                return true;
+            }
         }
 
         return false;
