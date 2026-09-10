@@ -99,13 +99,13 @@
                                     <div class="flex items-center gap-2">
                                         <form action="{{ route('client.offers.reject', $offer) }}" method="POST">
                                             @csrf
-                                            <button type="submit" onclick="return confirm('Refuser cette offre ?')" class="px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition">
+                                            <button type="submit" data-confirm="Refuser cette offre ?" class="px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition">
                                                 Rejeter
                                             </button>
                                         </form>
                                         <form action="{{ route('client.offers.accept', $offer) }}" method="POST">
                                             @csrf
-                                            <button type="submit" onclick="return confirm('Accepter cette offre ? Cela générera la mission et refusera les autres propositions.')" class="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition shadow-sm">
+                                            <button type="submit" data-confirm="Accepter cette offre ? Cela générera la mission et refusera les autres propositions." class="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition shadow-sm">
                                                 Accepter
                                             </button>
                                         </form>

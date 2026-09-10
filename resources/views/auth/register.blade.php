@@ -136,13 +136,13 @@
     <div style="margin-bottom:1rem;">
         <p class="section-label">Vous êtes :</p>
         <div class="role-cards">
-            <label class="role-card selected" id="card-client" onclick="selectRole('client')">
+            <label class="role-card selected" id="card-client" data-role-select="client">
                 <input type="radio" name="role" value="client" id="role-client" checked>
                 <span class="role-emoji">📦</span>
                 <span class="role-name">Expéditeur</span>
                 <span class="role-desc">J'envoie des colis</span>
             </label>
-            <label class="role-card" id="card-transporteur" onclick="selectRole('transporteur')">
+            <label class="role-card" id="card-transporteur" data-role-select="transporteur">
                 <input type="radio" name="role" value="transporteur" id="role-transporteur">
                 <span class="role-emoji">🚚</span>
                 <span class="role-name">Transporteur</span>
@@ -284,13 +284,5 @@
     </svg>
     Retour à l'accueil
 </a>
-
-<script>
-function selectRole(role) {
-    document.getElementById('role-' + role).checked = true;
-    document.getElementById('card-client').classList.toggle('selected', role === 'client');
-    document.getElementById('card-transporteur').classList.toggle('selected', role === 'transporteur');
-}
-</script>
 
 </x-guest-layout>
