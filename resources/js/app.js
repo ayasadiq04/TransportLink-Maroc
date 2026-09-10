@@ -120,23 +120,3 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         }
     });
 });
-
-const contactForm = document.getElementById('contact-form');
-
-if (contactForm) {
-    contactForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-
-        const button = document.getElementById('contact-submit-btn');
-        button.textContent = '✅ Message envoyé !';
-        button.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-        button.disabled = true;
-
-        setTimeout(() => {
-            button.textContent = 'Envoyer le message ✈️';
-            button.style.background = '';
-            button.disabled = false;
-            contactForm.reset();
-        }, 3000);
-    });
-}

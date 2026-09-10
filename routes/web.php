@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\OfferController;
@@ -14,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-// ─── Formulaire de contact ────────────────────────────────────────────────────
-Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 // ─── Dashboard (redirige selon le rôle) ───────────────────────────────────────
 Route::get('/dashboard', function () {

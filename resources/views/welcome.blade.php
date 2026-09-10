@@ -267,7 +267,8 @@
 
         /* ── CONTACT ── */
         .contact-section { background: #fff; }
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+        .contact-grid { display: grid; grid-template-columns: 1fr; align-items: start; }
+        .contact-info { max-width: 640px; margin: 0 auto; width: 100%; }
         .contact-info h2 { font-size: 2.2rem; font-weight: 900; color: #111827; letter-spacing: -0.03em; margin-bottom: 14px; }
         .contact-info p { font-size: 1rem; color: #6b7280; line-height: 1.7; margin-bottom: 36px; }
         .contact-items { display: flex; flex-direction: column; gap: 20px; }
@@ -288,35 +289,6 @@
         .ci-address { background: #fef3c7; }
         .contact-item-text small { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #9ca3af; margin-bottom: 2px; }
         .contact-item-text span { font-size: 0.9rem; font-weight: 700; color: #111827; }
-
-        /* Contact Form */
-        .contact-form-card {
-            background: #fff; border: 1px solid #e5e7eb;
-            border-radius: 24px; padding: 36px;
-            box-shadow: 0 8px 40px rgba(0,0,0,.07);
-        }
-        .contact-form-card h3 { font-size: 1.25rem; font-weight: 800; color: #111827; margin-bottom: 6px; }
-        .contact-form-card .sub { font-size: 0.83rem; color: #9ca3af; margin-bottom: 28px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-        .form-group label { font-size: 0.8rem; font-weight: 700; color: #374151; }
-        .form-input {
-            padding: 11px 14px; border-radius: 10px;
-            border: 1.5px solid #e5e7eb; font-size: 0.875rem;
-            color: #111827; background: #fff;
-            transition: border-color .2s, box-shadow .2s; outline: none;
-            font-family: inherit;
-        }
-        .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
-        textarea.form-input { resize: vertical; min-height: 110px; }
-        .form-submit {
-            width: 100%; padding: 13px; border-radius: 12px;
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
-            color: #fff; font-weight: 700; font-size: 0.9rem;
-            border: none; cursor: pointer; transition: all .2s;
-            box-shadow: 0 4px 14px rgba(79,70,229,.35);
-        }
-        .form-submit:hover { box-shadow: 0 8px 24px rgba(79,70,229,.45); transform: translateY(-1px); }
 
         /* ── FOOTER ── */
         footer {
@@ -348,14 +320,12 @@
             .hero h1 { font-size: 2.6rem; }
             .steps, .trans-grid { grid-template-columns: 1fr 1fr; }
             .services-grid { grid-template-columns: 1fr 1fr; }
-            .contact-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 640px) {
             nav.links { display: none; }
             .steps, .trans-grid, .services-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 2rem; }
             .section-title { font-size: 1.8rem; }
-            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -604,36 +574,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Form -->
-                <div class="contact-form-card">
-                    <h3>Envoyez-nous un message</h3>
-                    <p class="sub">Nous vous répondrons dans les plus brefs délais.</p>
-
-                    <form action="#" method="POST" id="contact-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contact-name">Nom complet</label>
-                                <input type="text" id="contact-name" name="name" class="form-input" placeholder="Votre nom" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="contact-email">Email</label>
-                                <input type="email" id="contact-email" name="email" class="form-input" placeholder="votre@email.com" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-subject">Sujet</label>
-                            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Ex : Question sur une expédition" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-message">Message</label>
-                            <textarea id="contact-message" name="message" class="form-input" placeholder="Décrivez votre demande en détail..." required></textarea>
-                        </div>
-                        <button type="submit" class="form-submit" id="contact-submit-btn">
-                            Envoyer le message ✈️
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
