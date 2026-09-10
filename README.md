@@ -1,59 +1,211 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+ # TransportLink Maroc
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plateforme de mise en relation entre **expéditeurs** et **transporteurs** au Maroc : les clients publient leurs demandes de transport, les transporteurs consultent les demandes disponibles et soumettent leurs offres, puis les deux parties suivent la mission jusqu'à la livraison et l'évaluation.
 
-## About Laravel
+## Problème résolu
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+En l'absence de place de marché structurée, trouver un transporteur (ou une cargaison) au Maroc repose sur le bouche-à-oreille et des moyens informels : appels multiples, prix opaques, aucune traçabilité. TransportLink centralise l'offre et la demande :
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- les clients trouvent rapidement un transporteur pour une marchandise donnée ;
+- les transporteurs remplissent leur flotte en trouvant des trajets rentables ;
+- chaque mission dispose d'un suivi d'états clair et d'un système d'avis post-livraison.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fonctionnalités principales
 
-## Learning Laravel
+- **Demandes de transport** : création, modification, suppression et suivi par le client (départ, arrivée, marchandise, poids, budget estimé, date d'enlèvement).
+- **Demandes disponibles** : liste simple des demandes en attente accessible aux transporteurs, avec pagination.
+- **Offres** : le transporteur propose un prix, un véhicule et des conditions ; le client accepte ou rejette (l'acceptation génère automatiquement la mission et refuse les autres offres).
+- **Missions** : suivi des états `in_delivery` → `delivered`, complétion automatique de la demande.
+- **Véhicules** : gestion du parc transporteur (type, marque, modèle, capacité, disponibilité).
+- **Avis** : après une mission livrée, le client peut évaluer le transporteur (note + commentaire) ; les avis sont consultables et gérables côté admin.
+- **Administration** : tableau de bord, gestion des utilisateurs, demandes, offres, missions, véhicules et avis.
+- **Espace personnel** : profil éditable, mot de passe, suppression de compte.
+- **API REST** : authentification Laravel Sanctum pour les données exposées.
+- **Sécurité** : middleware de rôle, policies d'autorisation, en-tête Content-Security-Policy global.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Rôles
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Rôle | Accès |
+| --- | --- |
+| **Admin** | Tableau de bord global, gestion des utilisateurs, demandes, offres, missions, véhicules et avis. |
+| **Client** | Gère ses demandes de transport, reçoit les offres, accepte/rejette, suit ses missions et laisse un avis après livraison. |
+| **Transporteur** | Gère ses véhicules, consulte les demandes disponibles, soumet des offres et met à jour le statut de ses missions. |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Stack technique
 
-## Agentic Development
+- **Laravel 11** (PHP 8.2+, image Docker PHP 8.4)
+- **PHP**
+- **MySQL 8.0**
+- **Blade** (templating serveur)
+- **Tailwind CSS**
+- **Alpine.js**
+- **Vite** (build front)
+- **Docker** / Docker Compose
+- **Laravel Sanctum** (authentification API)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Architecture générale
 
-```bash
-composer require laravel/boost --dev
+Application **MVC serveur-rendue** (Blade) complétée d'une **API REST** :
 
-php artisan boost:install
+- contrôles d'accès par rôle via `RoleMiddleware` et par entité via les **policies** ;
+- routage séparé : `routes/web.php` (application web), `routes/api.php` (API Sanctum), `routes/auth.php` (authentification Breeze) ;
+- vues organisées par rôle : `client/`, `transporteur/`, `admin/`, `auth/`, `profile/` ;
+- validation des entrées dans `app/Http/Requests` ;
+- middleware global **Content-Security-Policy** ;
+- modèle de données : `users`, `vehicles`, `transport_requests`, `offers`, `missions`, `reviews`.
+
+## Installation avec Docker
+
+Prérequis : Docker et Docker Compose.
+
+```sh
+# 1. Copier la configuration d'environnement
+cp .env.example .env
+
+# 2. Démarrer les conteneurs (app PHP + base MySQL)
+docker compose up -d
+
+# 3. Installer les dépendances PHP et JS
+docker compose exec app composer install
+docker compose exec app npm install
+
+# 4. Générer la clé applicative
+docker compose exec app php artisan key:generate
+
+# 5. Créer les tables
+docker compose exec app php artisan migrate
+
+# 6. Remplir la base avec les données de démonstration
+docker compose exec app php artisan db:seed
+
+# 7. Compiler les assets front
+docker compose exec app npm run build
+
+# 8. Accéder à l'application
+# http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Configuration .env
 
-## Contributing
+Le fichier `.env` (non versionné) contient la configuration de l'application. Variables clés :
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```env
+APP_NAME="TransportLink Maroc"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
 
-## Code of Conduct
+DB_CONNECTION=mysql
+DB_HOST=db          # "db" (réseau Docker) ou 127.0.0.1 (local)
+DB_PORT=3306
+DB_DATABASE=transportlink
+DB_USERNAME=transportlink
+DB_PASSWORD=transportlink_password
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Les valeurs de la base MySQL du Docker Compose sont définies dans `docker-compose.yml` (base `transportlink`, utilisateur `transportlink`, mot de passe `transportlink_password`, port hôte `3307`).
 
-## Security Vulnerabilities
+## Commandes importantes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sh
+docker compose up -d                                   # Démarrer app + base
+docker compose exec app php artisan migrate            # Créer/migrer les tables
+docker compose exec app php artisan db:seed            # Données de démonstration
+docker compose exec app php artisan migrate:fresh --seed  # Repartir de zéro + seed
+docker compose exec app php artisan test               # Lancer les tests
+docker compose exec app npm install                    # Dépendances front
+docker compose exec app npm run build                  # Compiler les assets Vite
+```
 
-## License
+## Comptes de démonstration
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# TransportLink-Maroc
+Créés par le seeder (`database/seeders/DatabaseSeeder.php`), mot de passe commun : `password`
+
+| Rôle | Email |
+| --- | --- |
+| Admin | `admin@transportlink.ma` |
+| Client 1 | `client1@transportlink.ma` |
+| Client 2 | `client2@transportlink.ma` |
+| Client 3 | `client3@transportlink.ma` |
+| Transporteur 1 | `transporteur1@transportlink.ma` |
+| Transporteur 2 | `transporteur2@transportlink.ma` |
+| Transporteur 3 | `transporteur3@transportlink.ma` |
+
+## Structure principale des dossiers
+
+```
+app/
+├── Http/
+│   ├── Controllers/      # Contrôleurs web et API (dossier Api/)
+│   ├── Middleware/       # RoleMiddleware, ContentSecurityPolicy
+│   └── Requests/         # Validation des formulaires
+├── Models/               # User, TransportRequest, Offer, Mission, Vehicle, Review
+└── Policies/             # Autorisations par entité
+
+database/
+├── factories/            # Factories Eloquent (tests, seeding)
+├── migrations/           # Schéma de la base
+└── seeders/              # Données de démonstration
+
+resources/views/          # Vues Blade
+├── admin/                # Interface admin
+├── client/               # Interface client
+├── transporteur/         # Interface transporteur
+├── auth/ profile/ layouts/ components/
+
+routes/
+├── web.php               # Routes de l'application web
+├── api.php               # Routes API (Sanctum)
+└── auth.php              # Routes d'authentification
+
+tests/                    # Tests Feature et Unit
+```
+
+## API disponible
+
+Authentification par **token Sanctum** (`Authorization: Bearer <token>`). Le rôle `transporteur` est requis via le middleware de rôle.
+
+| Méthode | Route | Description | Accès |
+| --- | --- | --- | --- |
+| GET | `/api/user` | Utilisateur connecté | `auth:sanctum` |
+| GET | `/api/me` | Utilisateur connecté (id, nom, email, rôle, dates) | `auth:sanctum` |
+| GET | `/api/transport-requests/available` | Demandes disponibles (status pending), paginées | `auth:sanctum` + `role:transporteur` |
+
+Exemple d'obtention d'un token (via `php artisan tinker` ou l'API Sanctum) :
+
+```php
+$token = $user->createToken('api')->plainTextToken;
+```
+
+## Tests
+
+La suite de tests (`tests/Feature/`) couvre : authentification et vérification d'email, rôles et accès, workflows complets (demande → offre → mission → avis), création manuelle d'avis après livraison, protections de suppression, rendu des pages, API et en-tête CSP (aucun script inline).
+
+```sh
+docker compose exec app php artisan test
+```
+
+## Développement local
+
+**Avec Docker** : démarrer les conteneurs puis lancer le serveur Vite :
+
+```sh
+docker compose up -d
+docker compose exec app npm run dev
+```
+
+L'application est servie sur `http://localhost:8000` (serveur `php artisan serve` du conteneur) et le hot-reload Vite sur `http://localhost:5173`.
+
+**Sans Docker** : installer PHP 8.2+, Composer et Node ; copier `.env.example` en `.env`, paramétrer MySQL (`DB_HOST=127.0.0.1`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) puis :
+
+```sh
+composer install
+npm install
+php artisan key:generate
+php artisan migrate --seed
+npm run dev
+```
+
+---
+
+Sous réserve des mentions contraires dans le code, toutes les informations de ce document reflètent l'état réel du projet à la date de sa dernière mise à jour.

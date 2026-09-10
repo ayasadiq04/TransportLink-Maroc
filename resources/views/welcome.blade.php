@@ -3,15 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TransportLink Maroc ÔÇö Plateforme N┬░1 de Transport de Marchandises au Maroc</title>
-    <meta name="description" content="Mise en relation directe entre exp├®diteurs et transporteurs professionnels certifi├®s partout au Maroc.">
+    <title>TransportLink Maroc — Plateforme N°1 de Transport de Marchandises au Maroc</title>
+    <meta name="description" content="Mise en relation directe entre expéditeurs et transporteurs professionnels certifiés partout au Maroc.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/js/app.js'])
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,7 +37,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ÔöÇÔöÇ NAV ÔöÇÔöÇ */
+        /* ── NAV ── */
         header {
             position: sticky;
             top: 0;
@@ -95,7 +92,7 @@
         }
         .btn-primary:hover { background: #3730a3; box-shadow: 0 4px 16px rgba(79,70,229,.4); transform: translateY(-1px); }
 
-        /* ÔöÇÔöÇ HERO ÔöÇÔöÇ */
+        /* ── HERO ── */
         .hero {
             padding: 80px 24px 100px;
             background: linear-gradient(160deg, #fff 0%, #eef2ff 50%, #f0fdf4 100%);
@@ -177,7 +174,7 @@
         }
         .card-btn:hover { background: #000; }
 
-        /* ÔöÇÔöÇ SECTIONS COMMON ÔöÇÔöÇ */
+        /* ── SECTIONS COMMON ── */
         .section { padding: 96px 24px; }
         .section-inner { max-width: 1280px; margin: 0 auto; }
         .section-tag {
@@ -193,7 +190,7 @@
         .section-sub { font-size: 1rem; color: #6b7280; max-width: 560px; margin: 0 auto 56px; line-height: 1.6; }
         .text-center { text-align: center; }
 
-        /* ÔöÇÔöÇ HOW IT WORKS ÔöÇÔöÇ */
+        /* ── HOW IT WORKS ── */
         .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
         .step-card {
             background: #f9fafb; border: 1px solid #f3f4f6;
@@ -213,7 +210,7 @@
         .step-card h3 { font-size: 1.15rem; font-weight: 800; color: #111827; margin-bottom: 10px; }
         .step-card p { font-size: 0.875rem; color: #6b7280; line-height: 1.65; }
 
-        /* ÔöÇÔöÇ SERVICES ÔöÇÔöÇ */
+        /* ── SERVICES ── */
         .bg-gray { background: #f9fafb; }
         .bg-white { background: #fff; }
         .services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
@@ -228,7 +225,7 @@
         .service-card h4 { font-size: 0.9rem; font-weight: 800; color: #111827; margin-bottom: 8px; }
         .service-card p { font-size: 0.78rem; color: #9ca3af; line-height: 1.5; }
 
-        /* ÔöÇÔöÇ TRANSPORTEURS ÔöÇÔöÇ */
+        /* ── TRANSPORTEURS ── */
         .transporteur-section { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); }
         .transporteur-section .section-title { color: #fff; }
         .transporteur-section .section-sub { color: #94a3b8; }
@@ -268,7 +265,7 @@
         }
         .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.08); }
 
-        /* ÔöÇÔöÇ CONTACT ÔöÇÔöÇ */
+        /* ── CONTACT ── */
         .contact-section { background: #fff; }
         .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
         .contact-info h2 { font-size: 2.2rem; font-weight: 900; color: #111827; letter-spacing: -0.03em; margin-bottom: 14px; }
@@ -320,11 +317,8 @@
             box-shadow: 0 4px 14px rgba(79,70,229,.35);
         }
         .form-submit:hover { box-shadow: 0 8px 24px rgba(79,70,229,.45); transform: translateY(-1px); }
-        .form-success { background: #ecfdf5; color: #047857; font-size: 0.82rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; border: 1px solid #a7f3d0; margin-bottom: 14px; }
-        .form-errors { list-style: none; margin: 0 0 14px; padding: 10px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; }
-        .form-errors li { color: #b91c1c; font-size: 0.8rem; }
 
-        /* ÔöÇÔöÇ FOOTER ÔöÇÔöÇ */
+        /* ── FOOTER ── */
         footer {
             background: #0f172a; color: #64748b;
             padding: 48px 24px;
@@ -348,7 +342,7 @@
         .footer-links a { font-size: 0.8rem; font-weight: 600; color: #64748b; text-decoration: none; transition: color .2s; }
         .footer-links a:hover { color: #fff; }
 
-        /* ÔöÇÔöÇ RESPONSIVE ÔöÇÔöÇ */
+        /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
             .hero-inner { grid-template-columns: 1fr; }
             .hero h1 { font-size: 2.6rem; }
@@ -367,7 +361,7 @@
 </head>
 <body>
 
-    <!-- ÔòÉÔòÉ NAVBAR ÔòÉÔòÉ -->
+    <!-- ══ NAVBAR ══ -->
     <header>
         <div class="nav-inner">
             <a href="/" class="logo">
@@ -383,7 +377,7 @@
             </a>
 
             <nav class="links">
-                <a href="#features">Comment ├ºa marche</a>
+                <a href="#features">Comment ça marche</a>
                 <a href="#services">Nos Services</a>
                 <a href="#transporters">Espace Transporteurs</a>
                 <a href="#contact">Contact</a>
@@ -404,21 +398,21 @@
         </div>
     </header>
 
-    <!-- ÔòÉÔòÉ HERO ÔòÉÔòÉ -->
+    <!-- ══ HERO ══ -->
     <section class="hero">
         <div class="hero-inner">
             <!-- Left -->
             <div>
                 <div class="hero-badge">
                     <span></span>
-                    R├®seau actif dans +30 villes du Maroc ­ƒç▓­ƒçª
+                    Réseau actif dans +30 villes du Maroc 🇲🇦
                 </div>
-                <h1>Exp├®diez vos marchandises en toute <em>simplicit├® & s├®curit├®</em>.</h1>
-                <p>TransportLink Maroc met en relation exp├®diteurs et transporteurs v├®rifi├®s. Publiez votre annonce, comparez les devis et suivez votre trajet en temps r├®el.</p>
+                <h1>Expédiez vos marchandises en toute <em>simplicité & sécurité</em>.</h1>
+                <p>TransportLink Maroc met en relation expéditeurs et transporteurs vérifiés. Publiez votre annonce, comparez les devis et suivez votre trajet en temps réel.</p>
 
                 <div class="hero-ctas">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="cta-main">Acc├®der ├á mon compte &rarr;</a>
+                        <a href="{{ route('dashboard') }}" class="cta-main">Accéder à mon compte &rarr;</a>
                     @else
                         <a href="{{ route('register') }}" class="cta-main">Publier une cargaison &rarr;</a>
                         <a href="{{ route('login') }}" class="cta-sec">Je suis transporteur</a>
@@ -428,11 +422,11 @@
                 <div class="hero-stats">
                     <div class="hero-stat">
                         <p>+1,500</p>
-                        <small>Trajets r├®alis├®s</small>
+                        <small>Trajets réalisés</small>
                     </div>
                     <div class="hero-stat">
                         <p>100%</p>
-                        <small>Transporteurs v├®rifi├®s</small>
+                        <small>Transporteurs vérifiés</small>
                     </div>
                     <div class="hero-stat">
                         <p class="green">4.9/5</p>
@@ -445,7 +439,7 @@
             <div>
                 <div class="hero-card">
                     <div class="card-top">
-                        <span>Derni├¿re demande active</span>
+                        <span>Dernière demande active</span>
                         <span class="badge-waiting">En attente de devis</span>
                     </div>
                     <div class="card-title">Transport de palettes alimentaires</div>
@@ -454,7 +448,7 @@
                             <div class="dot-green"></div>
                             <div>
                                 <div class="route-city">Casablanca</div>
-                                <div class="route-sub">Zone Industrielle Ain Seba├ó</div>
+                                <div class="route-sub">Zone Industrielle Ain Sebaâ</div>
                             </div>
                         </div>
                         <div class="route-line"></div>
@@ -469,145 +463,145 @@
                     <div class="card-meta">
                         <div class="meta-box">
                             <small>Poids & Volume</small>
-                            <span>4.5 T ÔÇó 8 Palettes</span>
+                            <span>4.5 T • 8 Palettes</span>
                         </div>
                         <div class="meta-box">
-                            <small>Budget estim├®</small>
+                            <small>Budget estimé</small>
                             <span class="green">3,500 DH</span>
                         </div>
                     </div>
-                    <a href="{{ route('register') }}" class="card-btn">Voir toutes les opportunit├®s &rarr;</a>
+                    <a href="{{ route('register') }}" class="card-btn">Voir toutes les opportunités &rarr;</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ÔòÉÔòÉ COMMENT ├çA MARCHE ÔòÉÔòÉ -->
+    <!-- ══ COMMENT ÇA MARCHE ══ -->
     <section id="features" class="section bg-white">
         <div class="section-inner">
             <div class="text-center" style="margin-bottom:56px">
                 <span class="section-tag tag-indigo">Simple et Efficace</span>
                 <h2 class="section-title">Comment fonctionne TransportLink ?</h2>
-                <p class="section-sub">Une proc├®dure fluide con├ºue pour vous faire gagner du temps et ├®conomiser sur vos co├╗ts logistiques.</p>
+                <p class="section-sub">Une procédure fluide conçue pour vous faire gagner du temps et économiser sur vos coûts logistiques.</p>
             </div>
             <div class="steps">
                 <div class="step-card">
                     <div class="step-num num-1">1</div>
                     <h3>Publiez votre demande</h3>
-                    <p>Pr├®cisez les villes de d├®part et d'arriv├®e, la nature de la cargaison, le poids, les dates souhait├®es et votre budget indicatif.</p>
+                    <p>Précisez les villes de départ et d'arrivée, la nature de la cargaison, le poids, les dates souhaitées et votre budget indicatif.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-num num-2">2</div>
                     <h3>Recevez des devis directs</h3>
-                    <p>Des transporteurs certifi├®s consultent votre offre et vous proposent leurs meilleurs tarifs avec les v├®hicules adapt├®s.</p>
+                    <p>Des transporteurs certifiés consultent votre offre et vous proposent leurs meilleurs tarifs avec les véhicules adaptés.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-num num-3">3</div>
-                    <h3>Suivez et ├ëvaluez</h3>
-                    <p>Acceptez l'offre id├®ale, suivez le statut de livraison (En attente ÔåÆ En cours ÔåÆ Livr├®e) et notez la prestation.</p>
+                    <h3>Suivez et Évaluez</h3>
+                    <p>Acceptez l'offre idéale, suivez le statut de livraison (En attente → En cours → Livrée) et notez la prestation.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ÔòÉÔòÉ SERVICES ÔòÉÔòÉ -->
+    <!-- ══ SERVICES ══ -->
     <section id="services" class="section bg-gray">
         <div class="section-inner">
             <div class="text-center" style="margin-bottom:56px">
                 <span class="section-tag tag-emerald">Polyvalence</span>
                 <h2 class="section-title">Toutes les cargaisons prises en charge</h2>
-                <p class="section-sub">Notre flotte de transporteurs s'adapte ├á tous vos besoins de livraison ├á travers le Maroc.</p>
+                <p class="section-sub">Notre flotte de transporteurs s'adapte à tous vos besoins de livraison à travers le Maroc.</p>
             </div>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">­ƒôª</div>
+                    <div class="service-icon">📦</div>
                     <h4>Colis volumineux & Meubles</h4>
-                    <p>D├®m├®nagements, ├®lectrom├®nager et biens fragiles avec emballage s├®curis├®.</p>
+                    <p>Déménagements, électroménager et biens fragiles avec emballage sécurisé.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">­ƒÅù´©Å</div>
+                    <div class="service-icon">🏗️</div>
                     <h4>Palettes & Fret Industriel</h4>
-                    <p>Marchandises palettis├®es pour usines, entrep├┤ts et grossistes.</p>
+                    <p>Marchandises palettisées pour usines, entrepôts et grossistes.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">ÔØä´©Å</div>
+                    <div class="service-icon">❄️</div>
                     <h4>Transport Frigorifique</h4>
-                    <p>Produits frais et surgel├®s sous temp├®rature dirig├®e et contr├┤l├®e.</p>
+                    <p>Produits frais et surgelés sous température dirigée et contrôlée.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">­ƒÜø</div>
-                    <h4>Vrac & Mat├®riaux</h4>
-                    <p>Agr├®gats, sable, mat├®riaux de construction et bennes basculantes.</p>
+                    <div class="service-icon">🚛</div>
+                    <h4>Vrac & Matériaux</h4>
+                    <p>Agrégats, sable, matériaux de construction et bennes basculantes.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ÔòÉÔòÉ ESPACE TRANSPORTEURS ÔòÉÔòÉ -->
+    <!-- ══ ESPACE TRANSPORTEURS ══ -->
     <section id="transporters" class="section transporteur-section">
         <div class="section-inner">
             <div class="text-center" style="margin-bottom:56px">
                 <span class="section-tag tag-amber">Pour les Professionnels du Transport</span>
-                <h2 class="section-title" style="color:#fff">Rejoignez notre r├®seau de transporteurs</h2>
-                <p class="section-sub" style="color:#94a3b8;margin-bottom:0">Acc├®dez ├á des centaines de demandes de transport chaque mois et d├®veloppez votre activit├® au Maroc.</p>
+                <h2 class="section-title" style="color:#fff">Rejoignez notre réseau de transporteurs</h2>
+                <p class="section-sub" style="color:#94a3b8;margin-bottom:0">Accédez à des centaines de demandes de transport chaque mois et développez votre activité au Maroc.</p>
             </div>
 
             <div class="trans-grid">
                 <div class="trans-card">
-                    <div class="trans-icon icon-blue">­ƒÄ»</div>
-                    <h3>Offres cibl├®es pour vous</h3>
-                    <p>Recevez uniquement des demandes correspondant ├á votre zone g├®ographique, votre type de v├®hicule et vos disponibilit├®s.</p>
+                    <div class="trans-icon icon-blue">🎯</div>
+                    <h3>Offres ciblées pour vous</h3>
+                    <p>Recevez uniquement des demandes correspondant à votre zone géographique, votre type de véhicule et vos disponibilités.</p>
                 </div>
                 <div class="trans-card">
-                    <div class="trans-icon icon-green">­ƒÆ░</div>
+                    <div class="trans-icon icon-green">💰</div>
                     <h3>Revenus garantis</h3>
-                    <p>Proposez vos tarifs librement, signez vos contrats directement avec les exp├®diteurs et percevez vos paiements en toute s├®curit├®.</p>
+                    <p>Proposez vos tarifs librement, signez vos contrats directement avec les expéditeurs et percevez vos paiements en toute sécurité.</p>
                 </div>
                 <div class="trans-card">
-                    <div class="trans-icon icon-purple">­ƒôè</div>
+                    <div class="trans-icon icon-purple">📊</div>
                     <h3>Dashboard professionnel</h3>
-                    <p>G├®rez votre flotte, vos offres et vos trajets depuis un espace d├®di├®. Suivez vos performances et vos avis en temps r├®el.</p>
+                    <p>Gérez votre flotte, vos offres et vos trajets depuis un espace dédié. Suivez vos performances et vos avis en temps réel.</p>
                 </div>
             </div>
 
             <div class="trans-ctas">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="btn-white">Acc├®der ├á mon espace &rarr;</a>
+                    <a href="{{ route('dashboard') }}" class="btn-white">Accéder à mon espace &rarr;</a>
                 @else
                     <a href="{{ route('register') }}" class="btn-white">S'inscrire comme transporteur &rarr;</a>
-                    <a href="{{ route('login') }}" class="btn-ghost">D├®j├á inscrit ? Connexion</a>
+                    <a href="{{ route('login') }}" class="btn-ghost">Déjà inscrit ? Connexion</a>
                 @endauth
             </div>
         </div>
     </section>
 
-    <!-- ÔòÉÔòÉ CONTACT ÔòÉÔòÉ -->
+    <!-- ══ CONTACT ══ -->
     <section id="contact" class="section contact-section">
         <div class="section-inner">
             <div class="contact-grid">
                 <!-- Info -->
                 <div class="contact-info">
                     <span class="section-tag tag-rose">Nous contacter</span>
-                    <h2>Une question ? <br>On est l├á pour vous.</h2>
-                    <p>Notre ├®quipe est disponible du lundi au vendredi de 9h ├á 18h pour r├®pondre ├á toutes vos questions concernant la plateforme ou vos exp├®ditions.</p>
+                    <h2>Une question ? <br>On est là pour vous.</h2>
+                    <p>Notre équipe est disponible du lundi au vendredi de 9h à 18h pour répondre à toutes vos questions concernant la plateforme ou vos expéditions.</p>
 
                     <div class="contact-items">
                         <a href="mailto:aya00sadiq@gmail.com" class="contact-item">
-                            <div class="contact-item-icon ci-email">­ƒôº</div>
+                            <div class="contact-item-icon ci-email">📧</div>
                             <div class="contact-item-text">
                                 <small>Adresse email</small>
                                 <span>aya00sadiq@gmail.com</span>
                             </div>
                         </a>
                         <a href="tel:+212700070007" class="contact-item">
-                            <div class="contact-item-icon ci-phone">­ƒô×</div>
+                            <div class="contact-item-icon ci-phone">📞</div>
                             <div class="contact-item-text">
-                                <small>T├®l├®phone</small>
+                                <small>Téléphone</small>
                                 <span>+212 700 070 007</span>
                             </div>
                         </a>
                         <div class="contact-item" style="cursor:default">
-                            <div class="contact-item-icon ci-address">­ƒôì</div>
+                            <div class="contact-item-icon ci-address">📍</div>
                             <div class="contact-item-text">
                                 <small>Adresse</small>
                                 <span>Casablanca, Maroc</span>
@@ -619,40 +613,29 @@
                 <!-- Form -->
                 <div class="contact-form-card">
                     <h3>Envoyez-nous un message</h3>
-                    <p class="sub">Nous vous r├®pondrons dans les plus brefs d├®lais.</p>
+                    <p class="sub">Nous vous répondrons dans les plus brefs délais.</p>
 
-                    <form action="{{ route('contact.send') }}" method="POST">
-                        @csrf
+                    <form action="#" method="POST" id="contact-form">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="contact-name">Nom complet</label>
-                                <input type="text" id="contact-name" name="name" class="form-input" placeholder="Votre nom" value="{{ old('name') }}" required>
+                                <input type="text" id="contact-name" name="name" class="form-input" placeholder="Votre nom" required>
                             </div>
                             <div class="form-group">
                                 <label for="contact-email">Email</label>
-                                <input type="email" id="contact-email" name="email" class="form-input" placeholder="votre@email.com" value="{{ old('email') }}" required>
+                                <input type="email" id="contact-email" name="email" class="form-input" placeholder="votre@email.com" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="contact-subject">Sujet</label>
-                            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Ex : Question sur une exp├®dition" value="{{ old('subject') }}" required>
+                            <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="Ex : Question sur une expédition" required>
                         </div>
                         <div class="form-group">
                             <label for="contact-message">Message</label>
-                            <textarea id="contact-message" name="message" class="form-input" placeholder="D├®crivez votre demande en d├®tail..." required>{{ old('message') }}</textarea>
+                            <textarea id="contact-message" name="message" class="form-input" placeholder="Décrivez votre demande en détail..." required></textarea>
                         </div>
-                        @if ($errors->any())
-                            <ul class="form-errors">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        @endif
-                        @if (session('success'))
-                            <p class="form-success">{{ session('success') }}</p>
-                        @endif
                         <button type="submit" class="form-submit" id="contact-submit-btn">
-                            Envoyer le message Ô£ê´©Å
+                            Envoyer le message ✈️
                         </button>
                     </form>
                 </div>
@@ -660,14 +643,14 @@
         </div>
     </section>
 
-    <!-- ÔòÉÔòÉ FOOTER ÔòÉÔòÉ -->
+    <!-- ══ FOOTER ══ -->
     <footer>
         <div class="footer-inner">
             <a href="/" class="footer-logo">
                 <div class="footer-logo-icon">TL</div>
                 <span>TransportLink Maroc</span>
             </a>
-            <p class="footer-copy">&copy; {{ date('Y') }} TransportLink Maroc. Tous droits r├®serv├®s. Projet Acad├®mique Fil Rouge.</p>
+            <p class="footer-copy">&copy; {{ date('Y') }} TransportLink Maroc. Tous droits réservés. Projet Académique Fil Rouge.</p>
             <div class="footer-links">
                 <a href="{{ route('login') }}">Connexion</a>
                 <a href="{{ route('register') }}">Inscription</a>

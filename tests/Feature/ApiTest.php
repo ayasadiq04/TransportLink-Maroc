@@ -75,9 +75,9 @@ class ApiTest extends TestCase
     }
 
     /**
-     * Les filtres de recherche fonctionnent via l'API.
+     * L'API ne liste que les demandes pending (jamais les demandes déjà acceptées).
      */
-    public function test_api_available_requests_filters(): void
+    public function test_api_available_requests_lists_only_pending(): void
     {
         $transporteur = User::factory()->create(['role' => 'transporteur']);
         $token = $transporteur->createToken('api')->plainTextToken;
@@ -109,7 +109,7 @@ class ApiTest extends TestCase
         ]);
 
         $this->withHeader('Authorization', "Bearer $token")
-            ->getJson('/api/transport-requests/available?arrival=Marrakech')
+            ->getJson('/api/transport-requests/available')
             ->assertStatus(200)
             ->assertJsonCount(1, 'data');
     }

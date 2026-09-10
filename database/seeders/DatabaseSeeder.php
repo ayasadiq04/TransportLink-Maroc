@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Mission;
 use App\Models\Offer;
-use App\Models\Review;
 use App\Models\TransportRequest;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -353,19 +352,6 @@ class DatabaseSeeder extends Seeder
                 'status'          => 'delivered',
                 'planned_at'      => now()->subDays(10),
                 'delivered_at'    => now()->subDays(7),
-            ]
-        );
-
-        // ─── Evaluation ───────────────────────────────────────────────────────
-        Review::firstOrCreate(
-            [
-                'mission_id' => $mission2->id,
-                'client_id'  => $client2->id,
-            ],
-            [
-                'transporteur_id' => $transporteur1->id,
-                'rating'          => 5,
-                'comment'         => 'Excellent service ! Livraison rapide et soignée. Je recommande vivement.',
             ]
         );
 

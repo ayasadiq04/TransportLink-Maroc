@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SearchAvailableTransportRequestsRequest;
 use App\Http\Requests\StoreTransportRequestRequest;
 use App\Http\Requests\UpdateTransportRequestRequest;
 use App\Models\TransportRequest;
@@ -40,46 +39,14 @@ class TransportRequestController extends Controller
     }
 
     /**
-     * Transporteur — demandes disponibles (status pending) avec filtres.
+     * Transporteur — demandes disponibles (status pending).
      */
-    public function availableForTransporteur(SearchAvailableTransportRequestsRequest $request)
+    public function availableForTransporteur()
     {
-        $filters = $request->filters();
-
-        $query = TransportRequest::where('status', $filters['status'])
-            ->with('client')
-            ->withCount('offers');
-
-        if ($filters['departure'] !== '') {
-            $query->where('departure_city', 'like', '%' . $filters['departure'] . '%');
-        }
-
-        if ($filters['arrival'] !== '') {
-            $query->where('destination_city', 'like', '%' . $filters['arrival'] . '%');
-        }
-
-        if ($filters['cargo'] !== '') {
-            $query->where(function ($q) use ($filters) {
-                $q->where('goods_type', 'like', '%' . $filters['cargo'] . '%')
-                  ->orWhere('title', 'like', '%' . $filters['cargo'] . '%');
-            });
-        } elseif ($filters['goods_type'] !== null) {
-            $query->where('goods_type', $filters['goods_type']);
-        }
-
-        if ($filters['weight_min'] !== null) {
-            $query->where('weight', '>=', $filters['weight_min']);
-        }
-
-        if ($filters['weight_max'] !== null) {
-            $query->where('weight', '<=', $filters['weight_max']);
-        }
-
-        if ($filters['pickup_date'] !== null) {
-            $query->whereDate('pickup_at', $filters['pickup_date']);
-        }
-
-        $requests = $query->latest()->paginate(9)->withQueryString();
+        $requests = TransportRequest::where('status', 'pending')
+            ->withCount('offers')
+            ->latest()
+            ->paginate(9);
 
         return view('transporteur.requests.index', compact('requests'));
     }
