@@ -65,15 +65,12 @@ class VehicleController extends Controller
     {
         $this->authorize('delete', $vehicle);
 
-        if ($vehicle->missions()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->exists()) {
-            return back()->with('error', 'Impossible de supprimer un véhicule utilisé dans une mission active.');
+        if ($vehicle->missions()->exists()) {
+            return back()->with('error', 'Impossible de supprimer un véhicule avec un historique de missions.');
         }
 
-        // Verifier que le vehicule n'est pas en mission active
-        if (!$vehicle->available) {
-            return redirect()
-                ->route('transporteur.vehicles.index')
-                ->with('error', 'Ce véhicule est actuellement en mission et ne peut pas être supprimé.');
+        if ($vehicle->offers()->exists()) {
+            return back()->with('error', 'Impossible de supprimer un véhicule avec un historique d\'offres.');
         }
 
         $vehicle->delete();

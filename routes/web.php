@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProfileController;
@@ -42,23 +43,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->group(function () {
 
     // Dashboard client
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        $stats = [
-            'requests'         => $user->transportRequests()->count(),
-            'pending_requests' => $user->transportRequests()->where('status', 'pending')->count(),
-            'requests_with_offers' => $user->transportRequests()
-                ->whereHas('offers')
-                ->where('status', 'pending')
-                ->count(),
-            'missions'         => $user->missionsAsClient()->count(),
-            'active_missions'  => $user->missionsAsClient()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
-            'delivered_missions' => $user->missionsAsClient()->where('status', 'delivered')->count(),
-        ];
-        $recentRequests = $user->transportRequests()->withCount('offers')->latest()->limit(3)->get();
-        $recentMissions = $user->missionsAsClient()->with('transporteur')->latest()->limit(3)->get();
-        return view('client.dashboard', compact('stats', 'recentRequests', 'recentMissions'));
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'client'])->name('dashboard');
 
     // Demandes de transport
     Route::get('/transport-requests', [TransportRequestController::class, 'index'])->name('transport-requests.index');
@@ -87,24 +72,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
 Route::middleware(['auth', 'role:transporteur'])->prefix('transporteur')->name('transporteur.')->group(function () {
 
     // Dashboard transporteur
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        $stats = [
-            'vehicles'           => $user->vehicles()->count(),
-            'available_vehicles' => $user->vehicles()->where('available', true)->count(),
-            'offers'             => $user->offers()->count(),
-            'pending_offers'     => $user->offers()->where('status', 'pending')->count(),
-            'accepted_offers'    => $user->offers()->where('status', 'accepted')->count(),
-            'missions'           => $user->missionsAsTransporteur()->count(),
-            'active_missions'    => $user->missionsAsTransporteur()->whereIn('status', ['pending', 'accepted', 'in_delivery'])->count(),
-            'delivered_missions' => $user->missionsAsTransporteur()->where('status', 'delivered')->count(),
-            'average_rating'     => $user->averageRating(),
-            'total_reviews'      => $user->reviewsReceived()->count(),
-        ];
-        $recentMissions = $user->missionsAsTransporteur()->with('client')->latest()->limit(3)->get();
-        $availableRequests = \App\Models\TransportRequest::where('status', 'pending')->count();
-        return view('transporteur.dashboard', compact('stats', 'recentMissions', 'availableRequests'));
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'transporteur'])->name('dashboard');
 
     // Vehicules (CRUD complet)
     Route::resource('vehicles', VehicleController::class)->except(['show']);

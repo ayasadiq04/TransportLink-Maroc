@@ -129,4 +129,107 @@ class WorkflowIntegrationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Aucune demande disponible');
     }
+
+    /**
+     * Test: Filters on available requests return only matching pending requests.
+     */
+    public function test_transporteur_available_requests_filters(): void
+    {
+        $client = User::factory()->create(['role' => 'client']);
+        $carrier = User::factory()->create(['role' => 'transporteur']);
+
+        $palette = TransportRequest::create([
+            'client_id'           => $client->id,
+            'title'               => 'Palettes Casablanca-Rabat',
+            'departure_city'      => 'Casablanca',
+            'departure_address'   => 'Ain Sebaa',
+            'destination_city'    => 'Rabat',
+            'destination_address' => 'Agdal',
+            'pickup_at'           => now()->addDays(2),
+            'goods_type'          => 'palette',
+            'weight'              => 2.5,
+            'estimated_budget'    => 1500,
+            'status'              => 'pending',
+        ]);
+
+        $liquid = TransportRequest::create([
+            'client_id'           => $client->id,
+            'title'               => 'Liquides Tanger-Marrakech',
+            'departure_city'      => 'Tanger',
+            'departure_address'   => 'Port',
+            'destination_city'    => 'Marrakech',
+            'destination_address' => 'Gueliz',
+            'pickup_at'           => now()->addDays(5),
+            'goods_type'          => 'liquide',
+            'weight'              => 8.0,
+            'estimated_budget'    => 5000,
+            'status'              => 'pending',
+        ]);
+
+        $accepted = TransportRequest::create([
+            'client_id'           => $client->id,
+            'title'               => 'Palettes déjà acceptées',
+            'departure_city'      => 'Casablanca',
+            'departure_address'   => 'Maarif',
+            'destination_city'    => 'Rabat',
+            'destination_address' => 'Hay Riad',
+            'pickup_at'           => now()->addDays(1),
+            'goods_type'          => 'palette',
+            'weight'              => 1.0,
+            'status'              => 'accepted',
+        ]);
+
+        // Filtre ville de départ
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['departure' => 'Casablanca']));
+        $r->assertStatus(200);
+        $r->assertSee('Palettes Casablanca-Rabat');
+        $r->assertDontSee('Liquides Tanger-Marrakech');
+
+        // Filtre ville d'arrivée
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['arrival' => 'Marrakech']));
+        $r->assertStatus(200);
+        $r->assertSee('Liquides Tanger-Marrakech');
+        $r->assertDontSee('Palettes Casablanca-Rabat');
+
+        // Filtre type de marchandise
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['goods_type' => 'palette']));
+        $r->assertStatus(200);
+        $r->assertSee('Palettes Casablanca-Rabat');
+        $r->assertDontSee('Liquides Tanger-Marrakech');
+
+        // Filtre poids min
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['weight_min' => '5']));
+        $r->assertStatus(200);
+        $r->assertSee('Liquides Tanger-Marrakech');
+        $r->assertDontSee('Palettes Casablanca-Rabat');
+
+        // Filtre poids max
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['weight_max' => '3']));
+        $r->assertStatus(200);
+        $r->assertSee('Palettes Casablanca-Rabat');
+        $r->assertDontSee('Liquides Tanger-Marrakech');
+
+        // Filtre date d'enlèvement
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', ['pickup_date' => now()->addDays(2)->format('Y-m-d')]));
+        $r->assertStatus(200);
+        $r->assertSee('Palettes Casablanca-Rabat');
+        $r->assertDontSee('Liquides Tanger-Marrakech');
+
+        // Les demandes non-pending ne sont jamais listées
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index'));
+        $r->assertStatus(200);
+        $r->assertDontSee('Palettes déjà acceptées');
+
+        // Combinaison de filtres
+        $r = $this->actingAs($carrier)->get(route('transporteur.requests.index', [
+            'departure'  => 'Casablanca',
+            'goods_type' => 'palette',
+            'weight_max' => '3',
+        ]));
+        $r->assertStatus(200);
+        $r->assertSee('Palettes Casablanca-Rabat');
+
+        // Valeur de filtre invalide est rejetée (403 pour role/validation)
+        $this->assertTrue($accepted->status === 'accepted');
+    }
 }

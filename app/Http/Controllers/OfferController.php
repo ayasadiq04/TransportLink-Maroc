@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOfferRequest;
-use App\Models\Mission;
 use App\Models\Offer;
 use App\Models\TransportRequest;
 use App\Models\Vehicle;
 use App\Notifications\NewOfferNotification;
-use App\Notifications\OfferAcceptedNotification;
+use App\Services\OfferAcceptanceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class OfferController extends Controller
 {
@@ -133,35 +131,7 @@ class OfferController extends Controller
             return back()->with('error', 'Cette offre n\'est plus disponible.');
         }
 
-        // Transaction pour garantir la coherence
-        DB::transaction(function () use ($offer, $transportRequest) {
-            // 1. Accepter l'offre selectionnee
-            $offer->update(['status' => 'accepted']);
-
-            Offer::where('transport_request_id', $transportRequest->id)
-                ->where('id', '!=', $offer->id)
-                ->where('status', 'pending')
-                ->update(['status' => 'rejected']);
-
-            // 3. Mettre a jour le statut de la demande
-            $transportRequest->update(['status' => 'accepted']);
-
-            // 4. Creer la mission automatiquement
-            $mission = Mission::create([
-                'transport_request_id' => $transportRequest->id,
-                'offer_id'             => $offer->id,
-                'client_id'            => $transportRequest->client_id,
-                'transporteur_id'      => $offer->transporteur_id,
-                'vehicle_id'           => $offer->vehicle_id,
-                'status'               => 'pending',
-                'planned_at'           => $transportRequest->pickup_at,
-            ]);
-
-            // 5. Rendre le vehicule indisponible
-           $offer->vehicle()->update(['available' => false]);
-
-            $offer->transporteur->notify(new OfferAcceptedNotification($offer));
-        });
+        app(OfferAcceptanceService::class)->accept($offer);
 
         return redirect()
             ->route('client.missions.index')

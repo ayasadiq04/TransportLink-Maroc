@@ -45,6 +45,64 @@ class DeletionProtectionTest extends TestCase
         $this->assertDatabaseCount('vehicles', 1);
     }
 
+    public function test_transporteur_cannot_delete_vehicle_with_mission_history(): void
+    {
+        $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
+        $transporteur = User::factory()->create(['role' => 'transporteur', 'email_verified_at' => now()]);
+        $vehicle = Vehicle::factory()->create(['transporteur_id' => $transporteur->id]);
+
+        $transportRequest = TransportRequest::factory()->create([
+            'client_id' => $client->id,
+            'status'    => 'completed',
+        ]);
+        $offer = Offer::factory()->create([
+            'transport_request_id' => $transportRequest->id,
+            'transporteur_id'      => $transporteur->id,
+            'vehicle_id'           => $vehicle->id,
+            'status'               => 'accepted',
+        ]);
+        // Mission terminée (historique, plus active)
+        $mission = \App\Models\Mission::factory()->create([
+            'transport_request_id' => $transportRequest->id,
+            'offer_id'             => $offer->id,
+            'client_id'            => $client->id,
+            'transporteur_id'      => $transporteur->id,
+            'vehicle_id'           => $vehicle->id,
+            'status'               => 'delivered',
+        ]);
+
+        $this->actingAs($transporteur)
+            ->delete("/transporteur/vehicles/{$vehicle->id}")
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseCount('vehicles', 1);
+        $this->assertDatabaseCount('missions', 1);
+    }
+
+    public function test_transporteur_cannot_delete_vehicle_with_offer_history(): void
+    {
+        $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
+        $transporteur = User::factory()->create(['role' => 'transporteur', 'email_verified_at' => now()]);
+        $vehicle = Vehicle::factory()->create(['transporteur_id' => $transporteur->id]);
+
+        $transportRequest = TransportRequest::factory()->create([
+            'client_id' => $client->id,
+            'status'    => 'pending',
+        ]);
+        Offer::factory()->create([
+            'transport_request_id' => $transportRequest->id,
+            'transporteur_id'      => $transporteur->id,
+            'vehicle_id'           => $vehicle->id,
+            'status'               => 'rejected',
+        ]);
+
+        $this->actingAs($transporteur)
+            ->delete("/transporteur/vehicles/{$vehicle->id}")
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseCount('vehicles', 1);
+    }
+
     public function test_transporteur_can_delete_vehicle_without_active_mission(): void
     {
         $transporteur = User::factory()->create(['role' => 'transporteur', 'email_verified_at' => now()]);

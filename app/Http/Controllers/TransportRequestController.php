@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchAvailableTransportRequestsRequest;
 use App\Http\Requests\StoreTransportRequestRequest;
 use App\Http\Requests\UpdateTransportRequestRequest;
 use App\Models\TransportRequest;
@@ -41,34 +42,44 @@ class TransportRequestController extends Controller
     /**
      * Transporteur — demandes disponibles (status pending) avec filtres.
      */
-    public function availableForTransporteur(Request $request)
+    public function availableForTransporteur(SearchAvailableTransportRequestsRequest $request)
     {
-        $query = TransportRequest::where('status', 'pending')
+        $filters = $request->filters();
+
+        $query = TransportRequest::where('status', $filters['status'])
             ->with('client')
             ->withCount('offers');
 
-        // Filtre départ (accepte 'departure' ou 'departure_city')
-        $departure = $request->input('departure', $request->input('departure_city'));
-        if (!empty($departure)) {
-            $query->where('departure_city', 'like', '%' . trim($departure) . '%');
+        if ($filters['departure'] !== '') {
+            $query->where('departure_city', 'like', '%' . $filters['departure'] . '%');
         }
 
-        // Filtre arrivée (accepte 'arrival' ou 'destination_city')
-        $arrival = $request->input('arrival', $request->input('destination_city'));
-        if (!empty($arrival)) {
-            $query->where('destination_city', 'like', '%' . trim($arrival) . '%');
+        if ($filters['arrival'] !== '') {
+            $query->where('destination_city', 'like', '%' . $filters['arrival'] . '%');
         }
 
-        // Filtre marchandise (accepte 'cargo' ou 'goods_type')
-        $cargo = $request->input('cargo', $request->input('goods_type'));
-        if (!empty($cargo)) {
-            $query->where(function ($q) use ($cargo) {
-                $q->where('goods_type', 'like', '%' . trim($cargo) . '%')
-                  ->orWhere('title', 'like', '%' . trim($cargo) . '%');
+        if ($filters['cargo'] !== '') {
+            $query->where(function ($q) use ($filters) {
+                $q->where('goods_type', 'like', '%' . $filters['cargo'] . '%')
+                  ->orWhere('title', 'like', '%' . $filters['cargo'] . '%');
             });
+        } elseif ($filters['goods_type'] !== null) {
+            $query->where('goods_type', $filters['goods_type']);
         }
 
-        $requests = $query->latest()->get();
+        if ($filters['weight_min'] !== null) {
+            $query->where('weight', '>=', $filters['weight_min']);
+        }
+
+        if ($filters['weight_max'] !== null) {
+            $query->where('weight', '<=', $filters['weight_max']);
+        }
+
+        if ($filters['pickup_date'] !== null) {
+            $query->whereDate('pickup_at', $filters['pickup_date']);
+        }
+
+        $requests = $query->latest()->paginate(9)->withQueryString();
 
         return view('transporteur.requests.index', compact('requests'));
     }
