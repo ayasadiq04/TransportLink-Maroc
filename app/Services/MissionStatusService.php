@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Mission;
-use App\Notifications\MissionDeliveredNotification;
+use App\Notifications\MissionStatusUpdatedNotification;
 
 class MissionStatusService
 {
@@ -36,7 +36,7 @@ class MissionStatusService
 
         $data = ['status' => $targetStatus];
 
-        // Si livrée : date de livraison + demande 'completed' + véhicule libéré + notification
+        // Si livrée : date de livraison + demande 'completed' + véhicule libéré
         if ($targetStatus === 'delivered') {
             $data['delivered_at'] = now();
             $mission->transportRequest()->update(['status' => 'completed']);
@@ -44,8 +44,6 @@ class MissionStatusService
             if ($mission->vehicle_id) {
                 $mission->vehicle()->update(['available' => true]);
             }
-
-            $mission->client->notify(new MissionDeliveredNotification($mission));
         }
 
         // Si annulée : demande 'cancelled' + véhicule libéré
@@ -58,6 +56,9 @@ class MissionStatusService
         }
 
         $mission->update($data);
+
+        // Notifier le client de chaque changement de statut (accepted, in_delivery, delivered, cancelled)
+        $mission->client->notify(new MissionStatusUpdatedNotification($mission, $targetStatus));
 
         return ['changed' => true, 'error' => null];
     }

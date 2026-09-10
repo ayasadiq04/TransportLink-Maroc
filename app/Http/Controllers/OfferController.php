@@ -7,6 +7,7 @@ use App\Models\Offer;
 use App\Models\TransportRequest;
 use App\Models\Vehicle;
 use App\Notifications\NewOfferNotification;
+use App\Notifications\OfferRejectedNotification;
 use App\Services\OfferAcceptanceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -146,6 +147,9 @@ class OfferController extends Controller
         $this->authorize('reject', $offer);
 
         $offer->update(['status' => 'rejected']);
+
+        // Notifier le transporteur propriétaire de l'offre
+        $offer->transporteur->notify(new OfferRejectedNotification($offer));
 
         return back()->with('success', 'Offre rejetée.');
     }

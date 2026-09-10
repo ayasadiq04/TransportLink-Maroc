@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Offer;
+use App\Support\NotificationChannels;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -20,7 +21,18 @@ class NewOfferNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return NotificationChannels::available();
+    }
+
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'title'      => 'Nouvelle offre reçue',
+            'message'    => 'Un transporteur a proposé une offre pour votre demande.',
+            'type'       => 'new_offer',
+            'url'        => route('client.offers.index'),
+            'related_id' => $this->offer->id,
+        ];
     }
 
     public function toMail(object $notifiable): MailMessage

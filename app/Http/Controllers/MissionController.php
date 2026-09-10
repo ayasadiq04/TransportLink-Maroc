@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Notifications\MissionDeliveredNotification;
 use App\Models\Mission;
 use App\Services\MissionStatusService;
 use Illuminate\Http\Request;

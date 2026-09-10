@@ -120,3 +120,27 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         }
     });
 });
+
+document.addEventListener('click', (event) => {
+    const link = event.target.closest('[data-notification-id]');
+
+    if (!link) {
+        return;
+    }
+
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const token = csrfMeta ? csrfMeta.getAttribute('content') : null;
+
+    if (!token) {
+        return;
+    }
+
+    fetch(`/notifications/${link.dataset.notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json',
+        },
+        keepalive: true,
+    });
+});

@@ -100,6 +100,8 @@
                     {{ ucfirst(auth()->user()->role) }}
                 </span>
 
+                @include('notifications.partials.bell')
+
                 <!-- Dropdown profil -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
@@ -174,6 +176,7 @@
                 <a href="{{ route('admin.missions.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Missions</a>
 <a href="{{ route('admin.vehicles.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Véhicules</a>
             @endif
+            <a href="{{ route('notifications.index') }}" class="block px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
         </div>
     </div>
 </nav>

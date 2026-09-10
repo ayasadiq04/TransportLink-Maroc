@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTransportRequestRequest;
 use App\Http\Requests\UpdateTransportRequestRequest;
 use App\Models\TransportRequest;
+use App\Models\User;
+use App\Notifications\NewTransportRequestNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class TransportRequestController extends Controller
 {
@@ -69,7 +72,11 @@ class TransportRequestController extends Controller
         $validated['client_id'] = auth()->id();
         $validated['status']    = 'pending';
 
-        TransportRequest::create($validated);
+        $transportRequest = TransportRequest::create($validated);
+
+        // Notifier tous les transporteurs d'une nouvelle demande disponible
+        $transporteurs = User::where('role', 'transporteur')->get();
+        Notification::send($transporteurs, new NewTransportRequestNotification($transportRequest));
 
         return redirect()
             ->route('client.transport-requests.index')
