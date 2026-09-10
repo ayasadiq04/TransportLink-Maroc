@@ -15,12 +15,6 @@
     <div class="py-10">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
 
-            @if(session('error'))
-                <div class="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             @if($errors->any())
                 <div class="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     <ul class="list-disc pl-5">

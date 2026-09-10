@@ -186,6 +186,15 @@
     {{-- ── Right form panel ── --}}
     <div class="auth-form-panel">
         <div class="auth-form-inner">
+
+            @if(session('success'))
+                <x-flash type="success" wrapper-class="mb-4 w-full">{{ session('success') }}</x-flash>
+            @endif
+
+            @if(session('error'))
+                <x-flash type="error" wrapper-class="mb-4 w-full">{{ session('error') }}</x-flash>
+            @endif
+
             {{ $slot }}
         </div>
     </div>

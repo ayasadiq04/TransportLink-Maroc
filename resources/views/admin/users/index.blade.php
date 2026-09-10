@@ -66,13 +66,19 @@
                                     </td>
                                     <td class="px-6 py-4 text-right text-xs whitespace-nowrap space-x-2">
                                         @if($user->id !== auth()->id())
-                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-rose-600 hover:text-rose-900 font-semibold">
-                                                    Supprimer
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    x-data=""
+                                                    x-on:click.prevent="$dispatch('open-modal', 'confirm-user-delete-{{ $user->id }}')"
+                                                    class="text-rose-600 hover:text-rose-900 font-semibold">
+                                                Supprimer
+                                            </button>
+
+                                            <x-confirm-modal
+                                                :name="'confirm-user-delete-'.$user->id"
+                                                title="Supprimer cet utilisateur"
+                                                message="Confirmer la suppression de cet utilisateur ? Cette action est définitive et supprimera toutes ses données associées."
+                                                :action="route('admin.users.destroy', $user)"
+                                            />
                                         @else
                                             <span class="text-gray-400 italic">Vous</span>
                                         @endif

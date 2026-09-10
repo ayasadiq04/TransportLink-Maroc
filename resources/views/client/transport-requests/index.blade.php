@@ -120,15 +120,19 @@
                                                        class="text-sm text-blue-600 hover:text-blue-800 font-medium">
                                                         Modifier
                                                     </a>
-                                                    <form action="{{ route('client.transport-requests.destroy', $request) }}"
-                                                          method="POST"
-                                                          onsubmit="return confirm('Supprimer cette demande ?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium">
-                                                            Supprimer
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                            x-data=""
+                                                            x-on:click.prevent="$dispatch('open-modal', 'confirm-request-delete-{{ $request->id }}')"
+                                                            class="text-sm text-red-600 hover:text-red-800 font-medium">
+                                                        Supprimer
+                                                    </button>
+
+                                                    <x-confirm-modal
+                                                        :name="'confirm-request-delete-'.$request->id"
+                                                        title="Supprimer cette demande"
+                                                        message="Supprimer cette demande ? Cette action est définitive."
+                                                        :action="route('client.transport-requests.destroy', $request)"
+                                                    />
                                                 @endif
                                             </div>
                                         </td>

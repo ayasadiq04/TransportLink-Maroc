@@ -14,13 +14,12 @@
             </div>
             <div class="flex items-center gap-3">
                 @if($user->id !== auth()->id())
-                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition">
-                            Supprimer l'utilisateur
-                        </button>
-                    </form>
+                    <button type="button"
+                            x-data=""
+                            x-on:click.prevent="$dispatch('open-modal', 'confirm-user-delete')"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition">
+                        Supprimer l'utilisateur
+                    </button>
                 @endif
             </div>
         </div>
@@ -145,4 +144,13 @@
 
         </div>
     </div>
+
+    @if($user->id !== auth()->id())
+        <x-confirm-modal
+            name="confirm-user-delete"
+            title="Supprimer cet utilisateur"
+            message="Confirmer la suppression de cet utilisateur ? Cette action est définitive et supprimera toutes ses données associées."
+            :action="route('admin.users.destroy', $user)"
+        />
+    @endif
 </x-app-layout>

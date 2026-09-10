@@ -48,13 +48,19 @@
                                         {{ $review->created_at->format('d/m/Y') }}
                                     </td>
                                     <td class="px-6 py-4 text-right text-xs whitespace-nowrap">
-                                        <form action="{{ route('admin.reviews.destroy', $review) }}" method="POST" onsubmit="return confirm('Supprimer définitivement cet avis ?');" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-rose-600 hover:text-rose-900 font-semibold">
-                                                Supprimer
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                                x-data=""
+                                                x-on:click.prevent="$dispatch('open-modal', 'confirm-review-delete-{{ $review->id }}')"
+                                                class="text-rose-600 hover:text-rose-900 font-semibold">
+                                            Supprimer
+                                        </button>
+
+                                        <x-confirm-modal
+                                            :name="'confirm-review-delete-'.$review->id"
+                                            title="Supprimer cet avis"
+                                            message="Supprimer définitivement cet avis ? Cette action est irréversible."
+                                            :action="route('admin.reviews.destroy', $review)"
+                                        />
                                     </td>
                                 </tr>
                             @endforeach

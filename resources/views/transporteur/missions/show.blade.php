@@ -27,25 +27,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Messages flash --}}
-            @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-                    <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-                    <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
-
+            {{-- Validation errors --}}
             @if($errors->any())
                 <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm">
                     <ul class="list-disc list-inside space-y-1">
@@ -195,34 +177,62 @@
                                 <p class="text-sm font-bold">Mission annulée</p>
                             </div>
                         @else
-                            <form action="{{ route('transporteur.missions.update-status', $mission) }}" method="POST" class="space-y-4">
-                                @csrf
-                                @method('PATCH')
+                            <div x-data="{ confirmStatusForm: null }">
+                                <form action="{{ route('transporteur.missions.update-status', $mission) }}" method="POST" class="space-y-4"
+                                      x-on:submit.prevent="confirmStatusForm = $el; $dispatch('open-modal', 'confirm-mission-status-{{ $mission->id }}')">
+                                    @csrf
+                                    @method('PATCH')
 
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nouveau statut</label>
-                                    <select name="status" class="w-full text-sm rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                                        @if($mission->status === 'pending')
-                                            <option value="pending" selected>En attente (actuel)</option>
-                                            <option value="accepted">Accepter / Confirmer la mission</option>
-                                            <option value="in_delivery">En cours de transport</option>
-                                            <option value="cancelled">Annuler la mission</option>
-                                        @elseif($mission->status === 'accepted')
-                                            <option value="accepted" selected>Acceptée (actuel)</option>
-                                            <option value="in_delivery">Démarrer le transport (En livraison)</option>
-                                            <option value="cancelled">Annuler la mission</option>
-                                        @elseif($mission->status === 'in_delivery')
-                                            <option value="in_delivery" selected>En cours de transport (actuel)</option>
-                                            <option value="delivered">Confirmer la livraison (Livrée)</option>
-                                            <option value="cancelled">Annuler la mission</option>
-                                        @endif
-                                    </select>
-                                </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nouveau statut</label>
+                                        <select name="status" class="w-full text-sm rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                                            @if($mission->status === 'pending')
+                                                <option value="pending" selected>En attente (actuel)</option>
+                                                <option value="accepted">Accepter / Confirmer la mission</option>
+                                                <option value="in_delivery">En cours de transport</option>
+                                                <option value="cancelled">Annuler la mission</option>
+                                            @elseif($mission->status === 'accepted')
+                                                <option value="accepted" selected>Acceptée (actuel)</option>
+                                                <option value="in_delivery">Démarrer le transport (En livraison)</option>
+                                                <option value="cancelled">Annuler la mission</option>
+                                            @elseif($mission->status === 'in_delivery')
+                                                <option value="in_delivery" selected>En cours de transport (actuel)</option>
+                                                <option value="delivered">Confirmer la livraison (Livrée)</option>
+                                                <option value="cancelled">Annuler la mission</option>
+                                            @endif
+                                        </select>
+                                    </div>
 
-                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition text-sm">
-                                    Appliquer le changement
-                                </button>
-                            </form>
+                                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition text-sm">
+                                        Appliquer le changement
+                                    </button>
+                                </form>
+
+                                <x-modal :name="'confirm-mission-status-'.$mission->id" max-width="md" focusable>
+                                    <div class="p-6">
+                                        <h3 class="text-lg font-semibold text-gray-900">Confirmer le changement de statut</h3>
+                                        <p class="mt-2 text-sm text-gray-600">
+                                            Confirmer le changement de statut de la mission ? Cette action est irréversible.
+                                        </p>
+                                        <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-3">
+                                            <x-secondary-button
+                                                type="button"
+                                                x-on:click="$dispatch('close-modal', 'confirm-mission-status-{{ $mission->id }}')"
+                                                class="mt-3 sm:mt-0"
+                                            >
+                                                Annuler
+                                            </x-secondary-button>
+                                            <button
+                                                type="button"
+                                                x-on:click="confirmStatusForm.submit()"
+                                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150"
+                                            >
+                                                Confirmer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </x-modal>
+                            </div>
                         @endif
                     </div>
 
