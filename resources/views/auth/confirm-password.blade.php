@@ -69,7 +69,7 @@
     <p>Il s'agit d'une zone sécurisée. Veuillez confirmer votre mot de passe pour continuer.</p>
 </div>
 
-<form method="POST" action="{{ route('password.confirm') }}">
+<form method="POST" action="{{ route('password.confirm') }}" data-loading>
     @csrf
 
     <!-- Password -->

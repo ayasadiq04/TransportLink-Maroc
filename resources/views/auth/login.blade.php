@@ -164,7 +164,7 @@
     <div class="session-status">{{ session('status') }}</div>
 @endif
 
-<form method="POST" action="{{ route('login') }}">
+<form method="POST" action="{{ route('login') }}" data-loading>
     @csrf
 
     {{-- Email --}}

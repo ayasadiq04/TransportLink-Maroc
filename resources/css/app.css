@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes loading-spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    animation: loading-spin 0.8s linear infinite;
+}

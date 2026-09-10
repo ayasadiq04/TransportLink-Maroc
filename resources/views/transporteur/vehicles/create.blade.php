@@ -18,7 +18,7 @@
 
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
 
-                <form action="{{ route('transporteur.vehicles.store') }}" method="POST">
+                <form action="{{ route('transporteur.vehicles.store') }}" method="POST" data-loading>
                     @csrf
 
                     <div class="space-y-6">

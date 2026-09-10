@@ -192,7 +192,7 @@
                                 $carrierVehicles = auth()->user()->vehicles()->where('available', true)->get();
                             @endphp
 
-                            <form action="{{ route('transporteur.offers.store', $transportRequest) }}" method="POST" class="space-y-4">
+                            <form action="{{ route('transporteur.offers.store', $transportRequest) }}" method="POST" class="space-y-4" data-loading>
                                 @csrf
 
                                 <div>

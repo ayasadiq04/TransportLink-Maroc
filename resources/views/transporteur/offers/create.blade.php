@@ -98,7 +98,8 @@
             <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
                 <form method="POST"
-                      action="{{ route('transporteur.offers.store', $transportRequest) }}">
+                      action="{{ route('transporteur.offers.store', $transportRequest) }}"
+                      data-loading>
 
                     @csrf
 

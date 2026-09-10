@@ -25,7 +25,7 @@
                     <p class="text-xs text-gray-500">Course : {{ $mission->transportRequest->departure_city }} &rarr; {{ $mission->transportRequest->destination_city }}</p>
                 </div>
 
-                <form action="{{ route('client.reviews.store', $mission) }}" method="POST" class="space-y-6">
+                <form action="{{ route('client.reviews.store', $mission) }}" method="POST" class="space-y-6" data-loading>
                     @csrf
 
                     <!-- Sélection étoiles -->
