@@ -99,7 +99,7 @@
 
                 <form method="POST"
                       action="{{ route('transporteur.offers.store', $transportRequest) }}"
-                      data-loading>
+                     >
 
                     @csrf
 

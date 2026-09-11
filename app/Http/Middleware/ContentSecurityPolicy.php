@@ -13,7 +13,7 @@ class ContentSecurityPolicy
     {
         $response = $next($request);
 
-        if ($response instanceof Response && ! $request->is('api/*') && ! $request->is('_debugbar/*')) {
+        if ($response instanceof Response && ! $request->is('_debugbar/*')) {
             $response->headers->set('Content-Security-Policy', $this->policy());
         }
 

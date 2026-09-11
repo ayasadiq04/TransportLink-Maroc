@@ -51,14 +51,14 @@
 @endif
 
 <div class="space-y-4">
-    <form method="POST" action="{{ route('verification.send') }}" data-loading>
+    <form method="POST" action="{{ route('verification.send') }}">
         @csrf
         <button type="submit" class="btn-submit">
             Renvoyer l'e-mail de confirmation
         </button>
     </form>
 
-    <form method="POST" action="{{ route('logout') }}" class="text-center" data-loading>
+    <form method="POST" action="{{ route('logout') }}" class="text-center">
         @csrf
         <button type="submit" class="text-sm text-slate-500 hover:text-slate-800 underline">
             Se déconnecter

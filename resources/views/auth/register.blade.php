@@ -129,7 +129,7 @@
     <p>Rejoignez le réseau logistique TransportLink Maroc</p>
 </div>
 
-<form method="POST" action="{{ route('register') }}" data-loading>
+<form method="POST" action="{{ route('register') }}">
     @csrf
 
     {{-- Role selector --}}

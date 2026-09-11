@@ -19,7 +19,8 @@ En l'absence de place de marché structurée, trouver un transporteur (ou une ca
 - **Véhicules** : gestion du parc transporteur (type, marque, modèle, capacité, disponibilité).
 - **Administration** : tableau de bord, gestion des utilisateurs, demandes, offres, missions et véhicules.
 - **Espace personnel** : profil éditable, mot de passe, suppression de compte.
-- **API REST** : authentification Laravel Sanctum pour les données exposées.
+- **Notifications** : notifications en base de données (cloche + compteur, lu/non-lu) lors de la création d'une demande, d'une offre, de l'acceptation/refus et des changements de statut de mission.
+- **Notifications email** : envois optionnels depuis le canal `database` lorsque le SMTP est réellement configuré.
 - **Sécurité** : middleware de rôle, policies d'autorisation, en-tête Content-Security-Policy global.
 
 ## Rôles
@@ -40,18 +41,17 @@ En l'absence de place de marché structurée, trouver un transporteur (ou une ca
 - **Alpine.js**
 - **Vite** (build front)
 - **Docker** / Docker Compose
-- **Laravel Sanctum** (authentification API)
 
 ## Architecture générale
 
-Application **MVC serveur-rendue** (Blade) complétée d'une **API REST** :
+Application **MVC serveur-rendue** (Blade) :
 
 - contrôles d'accès par rôle via `RoleMiddleware` et par entité via les **policies** ;
-- routage séparé : `routes/web.php` (application web), `routes/api.php` (API Sanctum), `routes/auth.php` (authentification Breeze) ;
+- routage séparé : `routes/web.php` (application web) et `routes/auth.php` (authentification Breeze) ;
 - vues organisées par rôle : `client/`, `transporteur/`, `admin/`, `auth/`, `profile/` ;
 - validation des entrées dans `app/Http/Requests` ;
 - middleware global **Content-Security-Policy** ;
-- modèle de données : `users`, `vehicles`, `transport_requests`, `offers`, `missions`.
+- modèle de données : `users`, `vehicles`, `transport_requests`, `offers`, `missions`, `notifications`.
 
 ## Installation avec Docker
 
@@ -135,10 +135,11 @@ Créés par le seeder (`database/seeders/DatabaseSeeder.php`), mot de passe comm
 ```
 app/
 ├── Http/
-│   ├── Controllers/      # Contrôleurs web et API (dossier Api/)
+│   ├── Controllers/      # Contrôleurs web
 │   ├── Middleware/       # RoleMiddleware, ContentSecurityPolicy
 │   └── Requests/         # Validation des formulaires
 ├── Models/               # User, TransportRequest, Offer, Mission, Vehicle
+├── Notifications/        # Notifications métier (base de données, email optionnel)
 └── Policies/             # Autorisations par entité
 
 database/
@@ -154,31 +155,14 @@ resources/views/          # Vues Blade
 
 routes/
 ├── web.php               # Routes de l'application web
-├── api.php               # Routes API (Sanctum)
 └── auth.php              # Routes d'authentification
 
 tests/                    # Tests Feature et Unit
 ```
 
-## API disponible
-
-Authentification par **token Sanctum** (`Authorization: Bearer <token>`). Le rôle `transporteur` est requis via le middleware de rôle.
-
-| Méthode | Route | Description | Accès |
-| --- | --- | --- | --- |
-| GET | `/api/user` | Utilisateur connecté | `auth:sanctum` |
-| GET | `/api/me` | Utilisateur connecté (id, nom, email, rôle, dates) | `auth:sanctum` |
-| GET | `/api/transport-requests/available` | Demandes disponibles (status pending), paginées | `auth:sanctum` + `role:transporteur` |
-
-Exemple d'obtention d'un token (via `php artisan tinker` ou l'API Sanctum) :
-
-```php
-$token = $user->createToken('api')->plainTextToken;
-```
-
 ## Tests
 
-La suite de tests (`tests/Feature/`) couvre : authentification et vérification d'email, rôles et accès, workflows complets (demande → offre → mission → livraison), protections de suppression, rendu des pages, API et en-tête CSP (aucun script inline).
+La suite de tests (`tests/Feature/`) couvre : authentification et vérification d'email, rôles et accès, workflows complets (demande → offre → mission → livraison), protections de suppression, rendu des pages, notifications et en-tête CSP (aucun script inline).
 
 ```sh
 docker compose exec app php artisan test

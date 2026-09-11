@@ -69,7 +69,7 @@
     <p>Choisissez un nouveau mot de passe fort pour sécuriser votre compte TransportLink.</p>
 </div>
 
-<form method="POST" action="{{ route('password.store') }}" data-loading>
+<form method="POST" action="{{ route('password.store') }}">
     @csrf
 
     <!-- Password Reset Token -->

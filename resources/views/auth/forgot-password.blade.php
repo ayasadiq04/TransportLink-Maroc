@@ -95,7 +95,7 @@
     </div>
 @endif
 
-<form method="POST" action="{{ route('password.email') }}" data-loading>
+<form method="POST" action="{{ route('password.email') }}">
     @csrf
 
     <!-- Email Address -->

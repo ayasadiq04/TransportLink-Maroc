@@ -15,7 +15,7 @@
 
     <div class="py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <form action="{{ route('client.transport-requests.store') }}" method="POST" class="space-y-6" data-loading>
+            <form action="{{ route('client.transport-requests.store') }}" method="POST" class="space-y-6">
                 @csrf
 
                 <!-- Section 1 : Titre & Trajet -->
