@@ -13,7 +13,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css'])
 </head>
-<body style="font-family: 'Inter', sans-serif" class="antialiased bg-gray-50 text-gray-900">
+<body class="font-['Inter',sans-serif] antialiased bg-gray-50 text-gray-900">
 
     <!-- ══ NAVBAR ══ -->
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
