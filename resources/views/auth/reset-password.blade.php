@@ -1,132 +1,83 @@
 <x-guest-layout>
-<style>
-    .auth-header { margin-bottom: 1.5rem; }
-    .auth-header h2 {
-        font-size: 1.6rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.03em;
-        margin-bottom: 0.4rem;
-    }
-    .auth-header p { font-size: 0.875rem; color: #64748b; line-height: 1.5; }
 
-    .field-group { position: relative; margin-bottom: 1.25rem; }
-    .field-group label {
-        display: block;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.4rem;
-    }
-    .field-icon-wrap { position: relative; }
-    .field-icon {
-        position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-        color: #9ca3af; pointer-events: none;
-    }
-    .field-icon svg { width: 18px; height: 18px; }
-    .field-input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.75rem;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
-        font-size: 0.9rem;
-        color: #0f172a;
-        background: #f8fafc;
-        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-        outline: none;
-        font-family: inherit;
-    }
-    .field-input::placeholder { color: #cbd5e1; }
-    .field-input:focus {
-        border-color: #3b82f6;
-        background: #fff;
-        box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
-    }
-    .field-error { color: #ef4444; font-size: 0.78rem; margin-top: 0.35rem; }
-
-    .btn-submit {
-        width: 100%;
-        padding: 0.85rem;
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        font-size: 0.92rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: transform 0.15s, box-shadow 0.15s;
-        box-shadow: 0 4px 16px rgba(59,130,246,0.35);
-        display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-        font-family: inherit;
-        margin-top: 1.25rem;
-    }
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.45); }
-    .btn-submit:active { transform: translateY(0); }
-</style>
-
-<div class="auth-header">
-    <h2>Nouveau mot de passe 🔒</h2>
-    <p>Choisissez un nouveau mot de passe fort pour sécuriser votre compte TransportLink.</p>
-</div>
-
-<form method="POST" action="{{ route('password.store') }}">
-    @csrf
-
-    <!-- Password Reset Token -->
-    <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-    <!-- Email Address -->
-    <div class="field-group">
-        <label for="email">Adresse e-mail</label>
-        <div class="field-icon-wrap">
-            <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-            </span>
-            <input id="email" class="field-input" type="email" name="email" value="{{ old('email', $request->email) }}" required autofocus autocomplete="username" />
-        </div>
-        @error('email')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
+    {{-- Header --}}
+    <div class="mb-6 text-center">
+        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Nouveau mot de passe 🔒</h2>
+        <p class="text-sm text-gray-500 mt-1">Choisissez un nouveau mot de passe fort pour sécuriser votre compte TransportLink.</p>
     </div>
 
-    <!-- Password -->
-    <div class="field-group">
-        <label for="password">Nouveau mot de passe</label>
-        <div class="field-icon-wrap">
-            <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-            </span>
-            <input id="password" class="field-input" type="password" name="password" required autocomplete="new-password" placeholder="Minimum 8 caractères" />
-        </div>
-        @error('password')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
-    </div>
+    <form method="POST" action="{{ route('password.store') }}">
+        @csrf
 
-    <!-- Confirm Password -->
-    <div class="field-group">
-        <label for="password_confirmation">Confirmer le nouveau mot de passe</label>
-        <div class="field-icon-wrap">
-            <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
-                </svg>
-            </span>
-            <input id="password_confirmation" class="field-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Répétez votre mot de passe" />
-        </div>
-        @error('password_confirmation')
-            <p class="field-error">{{ $message }}</p>
-        @enderror
-    </div>
+        {{-- Password Reset Token --}}
+        <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-    <button type="submit" class="btn-submit">
-        Réinitialiser le mot de passe &rarr;
-    </button>
-</form>
+        {{-- Email Address --}}
+        <div class="mb-4">
+            <label for="email" class="block text-xs font-semibold text-gray-700 mb-1.5">Adresse e-mail</label>
+            <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </span>
+                <input id="email"
+                       class="block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 bg-gray-50 placeholder-gray-400 outline-none transition-all duration-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                       type="email" name="email"
+                       value="{{ old('email', $request->email) }}" required autofocus
+                       autocomplete="username">
+            </div>
+            @error('email')
+                <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Password --}}
+        <div class="mb-4">
+            <label for="password" class="block text-xs font-semibold text-gray-700 mb-1.5">Nouveau mot de passe</label>
+            <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </span>
+                <input id="password"
+                       class="block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 bg-gray-50 placeholder-gray-400 outline-none transition-all duration-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                       type="password" name="password"
+                       required autocomplete="new-password"
+                       placeholder="Minimum 8 caractères">
+            </div>
+            @error('password')
+                <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Confirm Password --}}
+        <div class="mb-1">
+            <label for="password_confirmation" class="block text-xs font-semibold text-gray-700 mb-1.5">Confirmer le nouveau mot de passe</label>
+            <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
+                    </svg>
+                </span>
+                <input id="password_confirmation"
+                       class="block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 bg-gray-50 placeholder-gray-400 outline-none transition-all duration-200 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                       type="password" name="password_confirmation"
+                       required autocomplete="new-password"
+                       placeholder="Répétez votre mot de passe">
+            </div>
+            @error('password_confirmation')
+                <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <button type="submit"
+                class="w-full mt-6 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 text-white text-sm font-bold shadow-[0_4px_16px_rgba(59,130,246,0.35)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(59,130,246,0.45)] active:translate-y-0">
+            Réinitialiser le mot de passe &rarr;
+        </button>
+    </form>
+
 </x-guest-layout>

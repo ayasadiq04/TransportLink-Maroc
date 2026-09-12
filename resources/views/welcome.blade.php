@@ -11,121 +11,266 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-['Inter',sans-serif] antialiased bg-gray-50 text-gray-900">
 
     <!-- ══ NAVBAR ══ -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <a href="/" class="flex items-center gap-3">
-                <div class="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 flex items-center justify-center shadow-[0_4px_14px_rgba(79,70,229,0.35)]">
-                    <svg class="w-[22px] h-[22px] text-white stroke-white fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                    </svg>
-                </div>
-                <div class="leading-none">
-                    <span class="block text-lg font-black text-gray-900 tracking-[-0.02em]">TransportLink</span>
-                    <small class="block text-[0.62rem] font-bold uppercase tracking-[0.1em] text-emerald-500 -mt-px">Maroc</small>
-                </div>
+<header
+    x-data="{ mobileOpen: false }"
+    @keydown.escape.window="mobileOpen = false"
+    @click.outside="mobileOpen = false"
+    class="sticky top-0 z-50 bg-white border-b border-gray-100"
+>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 h-[68px]">
+
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2.5 shrink-0">
+            <div class="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 flex items-center justify-center shadow-[0_4px_14px_rgba(79,70,229,0.35)]">
+                <svg
+                    class="w-[22px] h-[22px] text-white stroke-white fill-none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                </svg>
+            </div>
+
+            <div class="leading-none">
+                <span class="block text-lg font-black text-gray-900 tracking-[-0.02em]">
+                    TransportLink
+                </span>
+                <small class="block text-[0.62rem] font-bold uppercase tracking-[0.1em] text-emerald-500 -mt-px">
+                    Maroc
+                </small>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-7 xl:gap-8">
+            <a
+                href="#features"
+                class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600"
+            >
+                Comment ça marche
             </a>
 
-            <nav class="hidden sm:flex items-center gap-8">
-                <a href="#features" class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600">Comment ça marche</a>
-                <a href="#services" class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600">Nos Services</a>
-                <a href="#transporters" class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600">Espace Transporteurs</a>
-                <a href="#contact" class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600">Contact</a>
-            </nav>
+            <a
+                href="#services"
+                class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600"
+            >
+                Nos Services
+            </a>
 
-            <div class="flex items-center gap-2.5">
-                @if (Route::has('login'))
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center gap-1.5 px-[22px] py-[9px] rounded-[10px] bg-indigo-600 text-white text-[0.85rem] font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900 hover:shadow-[0_4px_16px_rgba(79,70,229,0.4)] hover:-translate-y-px">Mon Tableau de Bord &rarr;</a>
-                    @else
-                        <a href="{{ route('login') }}" class="px-5 py-2 rounded-[10px] border-[1.5px] border-gray-200 bg-transparent text-[0.85rem] font-semibold text-gray-700 transition-all duration-200 hover:border-indigo-600 hover:text-indigo-600">Connexion</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="inline-flex items-center gap-1.5 px-[22px] py-[9px] rounded-[10px] bg-indigo-600 text-white text-[0.85rem] font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900 hover:shadow-[0_4px_16px_rgba(79,70,229,0.4)] hover:-translate-y-px">Inscription gratuite</a>
-                        @endif
-                    @endauth
-                @endif
-            </div>
+            <a
+                href="#transporters"
+                class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600"
+            >
+                Espace Transporteurs
+            </a>
+
+            <a
+                href="#contact"
+                class="text-sm font-semibold text-gray-500 transition-colors duration-200 hover:text-indigo-600"
+            >
+                Contact
+            </a>
+        </nav>
+
+        <!-- Desktop Buttons -->
+        <div class="hidden lg:flex items-center gap-2.5">
+            @if (Route::has('login'))
+
+                @auth
+
+                    <a
+                        href="{{ url('/dashboard') }}"
+                        class="inline-flex items-center gap-1.5 px-[22px] py-[9px] rounded-[10px] bg-indigo-600 text-white text-[0.85rem] font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900 hover:shadow-[0_4px_16px_rgba(79,70,229,0.4)] hover:-translate-y-px"
+                    >
+                        Mon Tableau de Bord &rarr;
+                    </a>
+
+                @else
+
+                    <a
+                        href="{{ route('login') }}"
+                        class="px-5 py-2 rounded-[10px] border-[1.5px] border-gray-200 bg-white text-[0.85rem] font-semibold text-gray-700 transition-all duration-200 hover:border-indigo-600 hover:text-indigo-600"
+                    >
+                        Connexion
+                    </a>
+
+                    @if (Route::has('register'))
+
+                        <a
+                            href="{{ route('register') }}"
+                            class="inline-flex items-center gap-1.5 px-[22px] py-[9px] rounded-[10px] bg-indigo-600 text-white text-[0.85rem] font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900 hover:shadow-[0_4px_16px_rgba(79,70,229,0.4)] hover:-translate-y-px"
+                        >
+                            Inscription gratuite
+                        </a>
+
+                    @endif
+
+                @endauth
+
+            @endif
         </div>
-    </header>
 
-    <!-- ══ HERO ══ -->
-    <section class="relative overflow-hidden px-6 pt-20 pb-[100px] bg-[linear-gradient(160deg,#ffffff_0%,#eef2ff_50%,#f0fdf4_100%)]">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <!-- Left -->
-            <div>
-                <h1 class="text-[2rem] sm:text-[2.6rem] lg:text-[3.5rem] font-black leading-[1.1] tracking-[-0.04em] text-gray-900 mb-5">Expédiez vos marchandises en toute <em class="font-normal bg-gradient-to-br from-indigo-600 to-emerald-500 bg-clip-text text-transparent">simplicité & sécurité</em>.</h1>
-                <p class="text-[1.05rem] text-gray-500 leading-7 max-w-[480px] mb-8">TransportLink Maroc met en relation expéditeurs et transporteurs vérifiés. Publiez votre annonce, comparez les devis et suivez votre trajet en temps réel.</p>
+        <!-- Mobile Menu Button -->
+        <button
+            type="button"@click="mobileOpen = !mobileOpen":aria-expanded="mobileOpen"aria-controls="mobile-nav"aria-label="Ouvrir le menu"
+            class="lg:hidden inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-lg border border-gray-200 bg-white text-gray-700 transition-colors duration-200 hover:border-indigo-600 hover:text-indigo-600"
+        >
 
-                <div class="flex gap-3 flex-wrap mb-12">
+            <!-- Menu Icon -->
+            <svg x-show="!mobileOpen" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" >
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+
+            <!-- Close Icon -->
+            <svg
+                x-show="mobileOpen"
+                class="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+            >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+
+        </button>
+
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div
+        id="mobile-nav"
+        x-show="mobileOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="lg:hidden border-t border-gray-100 bg-white px-4 sm:px-6 py-5 shadow-[0_16px_40px_rgba(0,0,0,0.08)]"
+    >
+
+        <nav class="flex flex-col gap-1">
+
+            <a
+                href="#features"
+                @click="mobileOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-indigo-600"
+            >
+                Comment ça marche
+            </a>
+
+            <a
+                href="#services"
+                @click="mobileOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-indigo-600"
+            >
+                Nos Services
+            </a>
+
+            <a
+                href="#transporters"
+                @click="mobileOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-indigo-600"
+            >
+                Espace Transporteurs
+            </a>
+
+            <a
+                href="#contact"
+                @click="mobileOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-indigo-600"
+            >
+                Contact
+            </a>
+
+        </nav>
+
+        <!-- Mobile Buttons -->
+        <div class="flex flex-col gap-2.5 mt-4 pt-4 border-t border-gray-100">
+
+            @if (Route::has('login'))
+
+                @auth
+
+                    <a
+                        href="{{ url('/dashboard') }}"
+                        @click="mobileOpen = false"
+                        class="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-[10px] bg-indigo-600 text-white text-sm font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900"
+                    >
+                        Mon Tableau de Bord &rarr;
+                    </a>
+
+                @else
+
+                    <a
+                        href="{{ route('login') }}"
+                        @click="mobileOpen = false"
+                        class="inline-flex items-center justify-center rounded-[10px] border-[1.5px] border-gray-200 bg-white text-gray-700 text-sm font-semibold px-5 py-3 transition-all duration-200 hover:border-indigo-600 hover:text-indigo-600"
+                    >
+                        Connexion
+                    </a>
+
+                    @if (Route::has('register'))
+
+                        <a
+                            href="{{ route('register') }}"
+                            @click="mobileOpen = false"
+                            class="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-[10px] bg-indigo-600 text-white text-sm font-bold shadow-[0_2px_8px_rgba(79,70,229,0.3)] transition-all duration-200 hover:bg-indigo-900"
+                        >
+                            Inscription gratuite
+                        </a>
+
+                    @endif
+
+                @endauth
+
+            @endif
+
+        </div>
+
+    </div>
+
+</header>
+
+     <!-- ══ HERO ══ -->
+    <section class="relative min-h-screen flex items-center bg-[url('/images/hero-truck.png')] bg-cover bg-center bg-no-repeat overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/30"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 w-full py-28 sm:py-32 lg:py-0">
+            <div class="max-w-[620px]">
+                <p class="text-xs font-bold tracking-[0.25em] text-indigo-300 mb-5 uppercase">Transport &bull; Logistique &bull; Maroc</p>
+
+                <h1 class="text-[2rem] sm:text-[2.5rem] lg:text-[3.75rem] font-black leading-[1.08] tracking-[-0.02em] text-white mb-6">
+                    Le transport de marchandises,<br>
+                    <span class="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">plus simple.</span>
+                </h1>
+
+                <p class="text-base sm:text-lg text-white/70 leading-7 sm:leading-8 max-w-[520px] mb-8 sm:mb-9">TransportLink Maroc met en relation les clients et les transporteurs pour un transport de marchandises plus rapide, plus sûr et plus efficace partout au Maroc.</p>
+
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="px-8 py-3.5 rounded-xl bg-indigo-600 text-white font-bold text-[0.95rem] shadow-[0_4px_20px_rgba(79,70,229,0.4)] transition-all duration-200 hover:bg-indigo-900 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(79,70,229,0.45)]">Accéder à mon compte &rarr;</a>
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center w-full sm:w-auto px-7 py-3.5 rounded-xl bg-indigo-600 text-white font-bold text-[0.95rem] shadow-[0_6px_24px_rgba(79,70,229,0.5)] transition-all duration-200 hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(79,70,229,0.5)]">Trouver un transport &rarr;</a>
                     @else
-                        <a href="{{ route('register') }}" class="px-8 py-3.5 rounded-xl bg-indigo-600 text-white font-bold text-[0.95rem] shadow-[0_4px_20px_rgba(79,70,229,0.4)] transition-all duration-200 hover:bg-indigo-900 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(79,70,229,0.45)]">Publier une cargaison &rarr;</a>
-                        <a href="{{ route('login') }}" class="px-7 py-3.5 rounded-xl bg-white border-[1.5px] border-gray-200 text-gray-700 font-bold text-[0.95rem] transition-all duration-200 hover:border-indigo-500 hover:text-indigo-600">Je suis transporteur</a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center w-full sm:w-auto px-7 py-3.5 rounded-xl bg-indigo-600 text-white font-bold text-[0.95rem] shadow-[0_6px_24px_rgba(79,70,229,0.5)] transition-all duration-200 hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(79,70,229,0.5)]">Trouver un transport &rarr;</a>
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white/10 border border-white/25 text-white font-bold text-[0.95rem] backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:border-white/40">Devenir transporteur</a>
                     @endauth
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200 max-w-[480px]">
-                    <div>
-                        <p class="text-[1.8rem] font-black text-gray-900">+1,500</p>
-                        <small class="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-gray-400">Trajets réalisés</small>
-                    </div>
-                    <div>
-                        <p class="text-[1.8rem] font-black text-gray-900">100%</p>
-                        <small class="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-gray-400">Transporteurs vérifiés</small>
-                    </div>
-                    <div>
-                        <p class="text-[1.8rem] font-black text-emerald-500">4.9/5</p>
-                        <small class="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-gray-400">Satisfaction client</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Demo card -->
-            <div>
-                <div class="relative overflow-hidden bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-gray-100 p-7 before:absolute before:top-[-50%] before:right-[-50%] before:w-[200%] before:h-[200%] before:content-[''] before:bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.05)_0%,transparent_70%)] before:pointer-events-none">
-                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
-                        <span class="text-[0.72rem] font-bold uppercase tracking-[0.07em] text-gray-400">Dernière demande active</span>
-                        <span class="bg-emerald-100 text-emerald-800 text-[0.72rem] font-bold px-2.5 py-1 rounded-full">En attente de devis</span>
-                    </div>
-                    <div class="text-lg font-extrabold text-gray-900 mb-3.5">Transport de palettes alimentaires</div>
-                    <div class="bg-gray-50 rounded-2xl p-4 mb-4">
-                        <div class="flex items-center gap-2.5 text-sm">
-                            <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_0_4px_#d1fae5]"></div>
-                            <div>
-                                <div class="font-bold text-gray-900">Casablanca</div>
-                                <div class="text-[0.72rem] text-gray-400">Zone Industrielle Ain Sebaâ</div>
-                            </div>
-                        </div>
-                        <div class="w-0.5 h-4 bg-gray-200 ml-[5px]"></div>
-                        <div class="flex items-center gap-2.5 text-sm mt-2.5">
-                            <div class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_0_4px_#ffe4e6]"></div>
-                            <div>
-                                <div class="font-bold text-gray-900">Tanger Med</div>
-                                <div class="text-[0.72rem] text-gray-400">Plateforme Logistique</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2.5 mb-[18px]">
-                        <div class="bg-indigo-100 rounded-[10px] px-3 py-2.5">
-                            <small class="block text-[0.68rem] text-gray-500 mb-0.5">Poids & Volume</small>
-                            <span class="font-extrabold text-sm text-gray-900">4.5 T • 8 Palettes</span>
-                        </div>
-                        <div class="bg-indigo-100 rounded-[10px] px-3 py-2.5">
-                            <small class="block text-[0.68rem] text-gray-500 mb-0.5">Budget estimé</small>
-                            <span class="font-extrabold text-base text-emerald-500">3,500 DH</span>
-                        </div>
-                    </div>
-                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-gray-900 text-white font-bold text-[0.8rem] rounded-xl transition-all duration-200 hover:bg-black">Voir toutes les opportunités &rarr;</a>
                 </div>
             </div>
         </div>
     </section>
-
     <!-- ══ COMMENT ÇA MARCHE ══ -->
     <section id="features" class="px-6 py-24 bg-white">
         <div class="max-w-7xl mx-auto">
@@ -236,25 +381,25 @@
                     <p class="text-base text-gray-500 leading-7 mb-9">Notre équipe est disponible du lundi au vendredi de 9h à 18h pour répondre à toutes vos questions concernant la plateforme ou vos expéditions.</p>
 
                     <div class="flex flex-col gap-5">
-                        <a href="mailto:aya00sadiq@gmail.com" class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100 transition-all duration-200 hover:border-indigo-200 hover:bg-indigo-100 hover:translate-x-1">
+                        <a href="mailto:aya00sadiq@gmail.com" class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100 ">
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-[1.2rem] bg-indigo-100">📧</div>
                             <div>
                                 <small class="block text-[0.72rem] font-bold uppercase tracking-[0.07em] text-gray-400 mb-0.5">Adresse email</small>
-                                <span class="text-sm font-bold text-gray-900">aya00sadiq@gmail.com</span>
+                                <span class="text-sm font-bold text-gray-900 break-words">ayasadiq@gmail.com</span>
                             </div>
                         </a>
-                        <a href="tel:+212700070007" class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100 transition-all duration-200 hover:border-indigo-200 hover:bg-indigo-100 hover:translate-x-1">
+                        <a href="tel:+212700070007" class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100 ">
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-[1.2rem] bg-emerald-100">📞</div>
                             <div>
                                 <small class="block text-[0.72rem] font-bold uppercase tracking-[0.07em] text-gray-400 mb-0.5">Téléphone</small>
                                 <span class="text-sm font-bold text-gray-900">+212 700 070 007</span>
                             </div>
                         </a>
-                        <div class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100 transition-all duration-200 hover:border-indigo-200 hover:bg-indigo-100 hover:translate-x-1 cursor-default">
+                        <div class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 border border-gray-100  cursor-default">
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-[1.2rem] bg-amber-100">📍</div>
                             <div>
                                 <small class="block text-[0.72rem] font-bold uppercase tracking-[0.07em] text-gray-400 mb-0.5">Adresse</small>
-                                <span class="text-sm font-bold text-gray-900">Casablanca, Maroc</span>
+                                <span class="text-sm font-bold text-gray-900">fquih ben saleh, Maroc</span>
                             </div>
                         </div>
                     </div>
