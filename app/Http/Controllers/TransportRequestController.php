@@ -36,7 +36,7 @@ class TransportRequestController extends Controller
             $query->where('goods_type', $request->goods_type);
         }
 
-        $requests = $query->latest()->get();
+        $requests = $query->latest()->paginate(15);
 
         return view('client.transport-requests.index', compact('requests'));
     }

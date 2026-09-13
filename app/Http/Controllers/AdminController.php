@@ -83,11 +83,10 @@ class AdminController extends Controller
             return back()->with('error', 'Vous ne pouvez pas modifier votre propre compte.');
         }
 
-        if ($user->hasAttribute('active')) {
-            $user->update(['active' => !$user->active]);
-        }
+        $user->update(['active' => !$user->active]);
 
-        return back()->with('success', 'Statut utilisateur mis à jour.');
+        $status = $user->active ? 'activé' : 'désactivé';
+        return back()->with('success', "Compte utilisateur {$status} avec succès.");
     }
 
     /**

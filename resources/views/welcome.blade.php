@@ -25,27 +25,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 h-[68px]">
 
         <!-- Logo -->
-        <a href="/" class="flex items-center gap-2.5 shrink-0">
-            <div class="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 flex items-center justify-center shadow-[0_4px_14px_rgba(79,70,229,0.35)]">
-                <svg
-                    class="w-[22px] h-[22px] text-white stroke-white fill-none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                </svg>
-            </div>
-
-            <div class="leading-none">
-                <span class="block text-lg font-black text-gray-900 tracking-[-0.02em]">
-                    TransportLink
-                </span>
-                <small class="block text-[0.62rem] font-bold uppercase tracking-[0.1em] text-emerald-500 -mt-px">
-                    Maroc
-                </small>
-            </div>
+        <a href="/" class="shrink-0">
+            <x-application-logo />
         </a>
 
         <!-- Desktop Navigation -->
@@ -411,9 +392,8 @@
     <!-- ══ FOOTER ══ -->
     <footer class="bg-slate-900 text-slate-500 px-6 py-12">
         <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-5 pb-6 border-b border-slate-800 mb-6">
-            <a href="/" class="flex items-center gap-2.5">
-                <div class="w-[34px] h-[34px] rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center">TL</div>
-                <span class="text-white font-extrabold text-base">TransportLink Maroc</span>
+            <a href="/" class="shrink-0">
+                <x-application-logo :dark="true" size="sm" />
             </a>
             <p class="text-[0.78rem] text-slate-600">&copy; {{ date('Y') }} TransportLink Maroc. Tous droits réservés. Projet Académique Fil Rouge.</p>
             <div class="flex gap-5">

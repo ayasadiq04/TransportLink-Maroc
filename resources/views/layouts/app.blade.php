@@ -59,10 +59,7 @@
             <footer class="bg-white border-t border-gray-200 mt-auto">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 bg-gradient-to-br from-blue-600 to-orange-500 rounded-md"></div>
-                            <span class="font-semibold text-gray-800">TransportLink Maroc</span>
-                        </div>
+                        <x-application-logo size="sm" />
                         <p class="text-sm text-gray-500">© {{ date('Y') }} TransportLink Maroc. Tous droits réservés.</p>
                     </div>
                 </div>

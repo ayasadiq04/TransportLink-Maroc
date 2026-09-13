@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Mes demandes de transport</h1>
-                <p class="text-sm text-gray-500 mt-1">{{ $requests->count() }} demande(s) au total</p>
+                <p class="text-sm text-gray-500 mt-1">{{ method_exists($requests, 'total') ? $requests->total() : $requests->count() }} demande(s) au total</p>
             </div>
             <a href="{{ route('client.transport-requests.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
@@ -141,6 +141,11 @@
                             </tbody>
                         </table>
                     </div>
+                    @if(method_exists($requests, 'hasPages') && $requests->hasPages())
+                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                            {{ $requests->withQueryString()->links() }}
+                        </div>
+                    @endif
                 </div>
             @else
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">

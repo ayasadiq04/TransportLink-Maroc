@@ -91,4 +91,46 @@ class ViewRenderTest extends TestCase
 
         $this->assertDatabaseCount('users', 3);
     }
+
+    public function test_admin_can_toggle_user_status_and_cannot_toggle_self(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now(), 'active' => true]);
+        $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now(), 'active' => true]);
+
+        $this->actingAs($admin)
+            ->patch("/admin/users/{$client->id}/toggle")
+            ->assertSessionHas('success');
+
+        $this->assertFalse((bool) $client->fresh()->active);
+
+        $this->actingAs($admin)
+            ->patch("/admin/users/{$client->id}/toggle")
+            ->assertSessionHas('success');
+
+        $this->assertTrue((bool) $client->fresh()->active);
+
+        $this->actingAs($admin)
+            ->patch("/admin/users/{$admin->id}/toggle")
+            ->assertSessionHas('error');
+
+        $this->assertTrue((bool) $admin->fresh()->active);
+    }
+
+    public function test_client_transport_requests_index_is_paginated(): void
+    {
+        $client = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
+
+        TransportRequest::factory()->count(20)->create([
+            'client_id' => $client->id,
+        ]);
+
+        $response = $this->actingAs($client)->get(route('client.transport-requests.index'));
+
+        $response->assertOk();
+        $response->assertViewHas('requests');
+        $requests = $response->viewData('requests');
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $requests);
+        $this->assertEquals(20, $requests->total());
+        $this->assertEquals(15, $requests->perPage());
+    }
 }
