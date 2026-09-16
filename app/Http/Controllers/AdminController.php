@@ -7,7 +7,6 @@ use App\Models\Offer;
 use App\Models\TransportRequest;
 use App\Models\User;
 use App\Models\Vehicle;
-use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {

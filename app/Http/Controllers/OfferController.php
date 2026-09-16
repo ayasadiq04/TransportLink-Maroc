@@ -9,7 +9,6 @@ use App\Models\Vehicle;
 use App\Notifications\NewOfferNotification;
 use App\Notifications\OfferRejectedNotification;
 use App\Services\OfferAcceptanceService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OfferController extends Controller
