@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Offer;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class OfferAcceptedNotification extends Notification
@@ -20,7 +19,7 @@ class OfferAcceptedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return NotificationChannels::available();
+        return ['database'];
     }
 
     public function toDatabase(object $notifiable): array
@@ -34,17 +33,6 @@ class OfferAcceptedNotification extends Notification
             'url'        => self::acceptedUrl($this->offer),
             'related_id' => $this->offer->id,
         ];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject('Votre offre a été acceptée !')
-            ->greeting('Félicitations ' . $notifiable->name . ',')
-            ->line('Votre offre de ' . number_format($this->offer->amount, 2) . ' DH pour le trajet ' . self::requestLabel($this->offer) . ' a été acceptée par le client.')
-            ->line('Une mission a été créée. Vous pouvez la suivre dans votre espace transporteur.')
-            ->action('Voir mes missions', self::acceptedUrl($this->offer))
-            ->line('Toutes les autres offres concernant cette demande ont été rejetées et votre véhicule a été réservé pour cette mission.');
     }
 
     private static function requestLabel(Offer $offer): string

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Mission;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class MissionStatusUpdatedNotification extends Notification
@@ -23,7 +22,7 @@ class MissionStatusUpdatedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return NotificationChannels::available();
+        return ['database'];
     }
 
     public function toDatabase(object $notifiable): array
@@ -37,17 +36,6 @@ class MissionStatusUpdatedNotification extends Notification
             'url'        => route('client.missions.show', $this->mission),
             'related_id' => $this->mission->id,
         ];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        [$title, $message] = $this->content();
-
-        return (new MailMessage)
-            ->subject($title)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
-            ->line($message)
-            ->action('Voir ma mission', route('client.missions.show', $this->mission));
     }
 
     /**

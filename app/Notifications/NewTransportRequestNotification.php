@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\TransportRequest;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewTransportRequestNotification extends Notification
@@ -20,7 +19,7 @@ class NewTransportRequestNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return NotificationChannels::available();
+        return ['database'];
     }
 
     public function toDatabase(object $notifiable): array
@@ -35,17 +34,5 @@ class NewTransportRequestNotification extends Notification
             'url'        => route('transporteur.requests.show', $this->transportRequest),
             'related_id' => $this->transportRequest->id,
         ];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject('Nouvelle demande de transport disponible')
-            ->greeting('Bonjour ' . $notifiable->name . ',')
-            ->line('Une nouvelle demande de transport est disponible : '
-                . $this->transportRequest->departure_city
-                . ' → '
-                . $this->transportRequest->destination_city . '.')
-            ->action('Voir la demande', route('transporteur.requests.show', $this->transportRequest));
     }
 }

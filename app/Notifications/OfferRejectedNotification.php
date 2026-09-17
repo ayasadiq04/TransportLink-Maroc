@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Offer;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class OfferRejectedNotification extends Notification
@@ -20,7 +19,7 @@ class OfferRejectedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return NotificationChannels::available();
+        return ['database'];
     }
 
     public function toDatabase(object $notifiable): array
@@ -35,18 +34,5 @@ class OfferRejectedNotification extends Notification
             'url'        => route('transporteur.offers.show', $this->offer),
             'related_id' => $this->offer->id,
         ];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        $request = $this->offer->transportRequest;
-        $label = $request ? $request->departure_city . ' → ' . $request->destination_city : (string) $this->offer->id;
-
-        return (new MailMessage)
-            ->subject('Votre offre a été refusée')
-            ->greeting('Bonjour ' . $notifiable->name . ',')
-            ->line('Votre offre pour la demande ' . $label . ' a été refusée par le client.')
-            ->line('Vous pouvez consulter vos autres offres et propositions en cours.')
-            ->action('Voir mon offre', route('transporteur.offers.show', $this->offer));
     }
 }
