@@ -1,3 +1,6 @@
+import Alpine from 'alpinejs';
+window.Alpine = Alpine;
+Alpine.start();
 
 document.addEventListener('click', (event) => {
     const toggle = event.target.closest('[data-password-toggle]');
